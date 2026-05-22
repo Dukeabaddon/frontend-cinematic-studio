@@ -1,0 +1,31 @@
+# --- Local reference material (not part of published skill) ---
+reference/
+uploads/
+
+# --- Generated / installed by install.ps1 (do not commit) ---
+tools/
+.cursor/skills/
+.cursor/mcp.json
+
+# --- Gate-MCP runtime ---
+.gate-mcp/
+
+# --- Graphify outputs ---
+graphify-out/
+
+# --- Node / build artifacts ---
+node_modules/
+**/node_modules/
+tools/Gate-MCP/dist/
+
+# --- OS & editors ---
+.DS_Store
+Thumbs.db
+*.swp
+.idea/
+.vscode/
+
+# --- Env & secrets ---
+.env
+.env.*
+*.pem

@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "gatemcp": {
+      "command": "npx",
+      "args": ["-y", "@gatemcp/cli@0.5.5"],
+      "env": {
+        "GATE_PROJECT_ROOT": "REPLACE_WITH_YOUR_REPO_ABSOLUTE_PATH"
+      }
+    }
+  }
+}
