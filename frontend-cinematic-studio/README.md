@@ -1,81 +1,127 @@
-# Frontend Cinematic Studio
+# Frontend Cinematic Studio — Skill Package
 
-Installable Agent Skill for award-level cinematic web design — goals-first workflow, anti-AI-slop doctrine, Graphify + Gate-MCP token stack, caveman agent narration with accessible user briefs.
+Portable [**Agent Skill**](https://agentskills.io/) folder. Copy `frontend-cinematic-studio/` into your IDE skills path — no other files required for the design system to work.
 
-## Quick install
+**Skill ID:** `frontend-cinematic-studio`  
+**Invoke:** `/frontend-cinematic-studio` in Agent chat  
+**Mode:** Manual invocation (won’t auto-load on every message)
 
-### 1. Tools (this repo)
+---
+
+## What this skill does
+
+Teaches the agent to:
+
+- Write **goals** (outcomes) before **tasks** (implementation)
+- Build **cinematic, tactile, editorial** UIs — not generic SaaS templates
+- Follow **anti-AI-slop** rules (palette, motion, materials, composition)
+- Use **Graphify + Gate-MCP** when exploring large codebases (optional)
+- Give you clear **User briefs** after tool runs (accessible guidance)
+
+Full repo setup (install script, MCP, Graphify): see [../README.md](../README.md).
+
+---
+
+## Install (skill only)
+
+Copy this directory:
+
+| IDE | Destination |
+|-----|-------------|
+| Cursor (project) | `.cursor/skills/frontend-cinematic-studio/` |
+| Cursor (global) | `~/.cursor/skills/frontend-cinematic-studio/` |
+| Antigravity | `.agent/skills/frontend-cinematic-studio/` |
+| VS Code Copilot | `.github/skills/frontend-cinematic-studio/` |
 
 ```powershell
-cd c:\Users\Aaron\Documents\n8n\skill-creation
-.\install.ps1
-```
-
-Or manually:
-
-```powershell
-pip install graphifyy
-python -m graphify cursor install
-cd tools\Gate-MCP
-npm install --legacy-peer-deps
-npm run build
-```
-
-Restart Cursor after MCP config is written.
-
-### 2. Skill (pick one)
-
-**Project (recommended):**
-
-```powershell
+# From repo root
 Copy-Item -Recurse frontend-cinematic-studio .cursor\skills\frontend-cinematic-studio
 ```
 
-**Global (all projects):**
+Restart the IDE. Confirm the skill under **Settings → Rules** (Cursor) or **Agent Customizations → Skills** (Copilot).
 
-```powershell
-Copy-Item -Recurse frontend-cinematic-studio $env:USERPROFILE\.cursor\skills\frontend-cinematic-studio
+---
+
+## Usage
+
+### 1. Invoke
+
+```text
+/frontend-cinematic-studio
 ```
 
-**Antigravity:**
+### 2. Provide a brief
 
-```powershell
-Copy-Item -Recurse frontend-cinematic-studio .agent\skills\frontend-cinematic-studio
-```
+Include what you can:
 
-**VS Code Copilot:**
+- **Mood** (e.g. forest gothic, editorial travel, neon alley)
+- **Reference** (image URL or attachment)
+- **Stack** (or “suggest stack” — agent uses `references/tech-stack-menu.md`)
+- **Scope** (landing only vs full site)
 
-```powershell
-Copy-Item -Recurse frontend-cinematic-studio .github\skills\frontend-cinematic-studio
-```
+### 3. Approve goals
 
-### 3. Use
+Agent outputs **aesthetic tuple** + **goals**. Reply `approved` or edit goals before code.
 
-In Agent chat: `/frontend-cinematic-studio`
+### 4. Optional workflows
 
-Then describe the site (reference image, mood, stack). Agent writes **goals** before code.
+| Goal | Open |
+|------|------|
+| New build from Pinterest | `references/workflows/phase-3-pinterest-score.md` then `phase-1-kimi-build.md` |
+| Fix motion / hero layers | `references/workflows/phase-2-claude-refine.md` |
+| Tune “more cinematic” | `references/prompt-interpreter.md` |
 
-## Verify
+---
 
-- [ ] `python -m graphify --version`
-- [ ] Cursor → MCP → `gatemcp` connected
-- [ ] Skill appears in Cursor Settings → Rules
-- [ ] Invoke `/frontend-cinematic-studio` — agent outputs goals + aesthetic tuple
+## Package contents
 
-## Structure
-
-```
+```text
 frontend-cinematic-studio/
-├── SKILL.md              # Control plane
-├── README.md
-├── references/           # Handbook (progressive disclosure)
+├── SKILL.md                 # Agent entry (read first on invoke)
+├── README.md                # This file
+├── references/
+│   ├── philosophy.md
+│   ├── anti-patterns.md
+│   ├── materials.md
+│   ├── transitions.md
+│   ├── motion.md
+│   ├── composition.md
+│   ├── visual-language.md
+│   ├── architecture.md
+│   ├── agentic-engineering.md
+│   ├── prompt-interpreter.md
+│   ├── aesthetic-tuple-template.md
+│   ├── scope-triage.md
+│   ├── tech-stack-menu.md
+│   ├── token-stack.md
+│   └── workflows/
+│       ├── phase-1-kimi-build.md
+│       ├── phase-2-claude-refine.md
+│       └── phase-3-pinterest-score.md
 ├── checklists/
-├── prompts/
-└── install.ps1 (repo root)
+│   ├── award-bar.md
+│   └── verify.md
+└── prompts/
+    └── anime-fantasy-landing.md
 ```
 
-## Links
+**Progressive disclosure:** `SKILL.md` is the table of contents; agents load `references/*.md` only when needed. Keep new detail in `references/`, not by bloating `SKILL.md` ([authoring best practice](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices)).
 
-- [Graphify](https://github.com/safishamsi/graphify) — PyPI: `graphifyy`
-- [Gate-MCP](https://github.com/Dukeabaddon/Gate-MCP) — cloned to `tools/Gate-MCP`
-- [Agent Skills spec](https://agentskills.io/specification)
+---
+
+## Frontmatter (for maintainers)
+
+```yaml
+name: frontend-cinematic-studio      # must match folder name
+description: ...                       # discovery trigger (what + when)
+disable-model-invocation: true         # manual /slash only
+```
+
+To allow auto-discovery, remove `disable-model-invocation` and strengthen `description` with your trigger phrases.
+
+---
+
+## Checklists
+
+- Before shipping a site: [checklists/award-bar.md](checklists/award-bar.md)
+- After install or edits: [checklists/verify.md](checklists/verify.md)
