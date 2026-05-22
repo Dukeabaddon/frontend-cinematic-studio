@@ -20,9 +20,24 @@ metadata:
 
 Master operating system for handcrafted, atmospheric, editorial web experiences — not generic AI slop.
 
+## MANDATORY preflight (first — do not skip)
+
+Inactive until `/frontend-cinematic-studio`. Then run [references/mandatory-preflight.md](references/mandatory-preflight.md) **before** goals or code.
+
+**Bootstrap (shell):** Run `scripts/bootstrap-tooling.ps1` from project root — installs `graphifyy` if missing, scans `graphify-out/`, `.understand-anything/`, Gate paths, ensures `.cursor/mcp.json`.
+
+**Hard rules:**
+
+1. **Detect first** — reuse `graphify-out/` or `.understand-anything/knowledge-graph.json` if present; else `pip install graphifyy` + `python -m graphify .`
+2. **Gate always** — `gate_init` first MCP call; **default** `gate_compress_file` for code reads (skip only files &lt; 40 lines). If `gate_*` missing → one-sentence MCP warning.
+3. **Caveman** — tool narration only.
+4. **User brief** — max 3 short bullets; Gate help → [references/gate-quick.md](references/gate-quick.md)
+
+No goals/code until brief Preflight posted.
+
 ## User guidance (always on)
 
-The user may need clear, patient, step-by-step guidance. After tool runs, include a **User brief** in plain English: what happened, current goal, one suggested next step. Never bury decisions in caveman shorthand when speaking to the user.
+Short, calm, plain English — **no walls of text**. After tools: **User brief** (≤3 bullets). User may get overwhelmed; offer “explain more” only if they ask.
 
 ## Agent response mode (caveman — internal narration only)
 
@@ -42,7 +57,7 @@ The user may need clear, patient, step-by-step guidance. After tool runs, includ
 1. **Scope triage** — See [references/scope-triage.md](references/scope-triage.md): simple single-view vs complex multi-section site.
 2. **Aesthetic tuple** — Fill [references/aesthetic-tuple-template.md](references/aesthetic-tuple-template.md) (mood, palette, fonts, motion, z-layers). No CSS until tuple is written.
 3. **Tech stack** — Read `package.json`. If empty, propose tier from [references/tech-stack-menu.md](references/tech-stack-menu.md). User confirms before scaffold.
-4. **Token stack** — Run [references/token-stack.md](references/token-stack.md) (Graphify + Gate-MCP).
+4. **Token stack** — [references/mandatory-preflight.md](references/mandatory-preflight.md) + [references/gate-quick.md](references/gate-quick.md) (brief).
 
 ---
 
@@ -74,15 +89,17 @@ Philosophy: [references/philosophy.md](references/philosophy.md)
 
 ---
 
-## Token stack (mandatory on large repos)
+## Token stack (mandatory when skill is invoked)
+
+See [references/mandatory-preflight.md](references/mandatory-preflight.md) for the full gate.
 
 | Order | Tool | When |
 |-------|------|------|
-| 1 | Graphify | No `graphify-out/` → `python -m graphify .` (Windows: no leading `/`) |
-| 2 | `gate_init` | Start of session on workspace with Gate-MCP |
-| 3 | Graph query | Architecture questions → `graphify query` or Gate `graphify_map` |
-| 4 | `gate_compress_file` | Read large source; skip tiny files you edit verbatim |
-| 5 | `gate_clean_response` | Bulky JSON tool outputs |
+| 1 | Graphify | No `graphify-out/` → **must** run `python -m graphify .` |
+| 2 | `gate_init` | **Must** be first MCP call if Gate tools exist |
+| 3 | Graph query | Architecture → `graphify query` / Gate `graphify_map` — not mass Read |
+| 4 | `gate_compress_file` | **Default for all code reads** (skip only &lt; 40 lines) |
+| 5 | `gate_clean_response` | JSON tool outputs **> 500 tokens** |
 
 Details: [references/token-stack.md](references/token-stack.md)
 
@@ -143,14 +160,13 @@ Pick tier from [references/tech-stack-menu.md](references/tech-stack-menu.md) pe
 
 ## Activation checklist
 
-Copy when skill starts:
+Copy when skill starts (after preflight):
 
 ```
 Cinematic Studio active
+- [ ] Preflight posted (graphify + gate status)
 - [ ] Aesthetic tuple drafted
 - [ ] Goals written (not tasks)
-- [ ] graphify-out/ or build graph
-- [ ] gate_init (if Gate-MCP available)
 - [ ] Anti-slop pass planned
 ```
 

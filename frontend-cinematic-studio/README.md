@@ -18,7 +18,8 @@ Teaches the agent to:
 - Use **Graphify + Gate-MCP** when exploring large codebases (optional)
 - Give you clear **User briefs** after tool runs (accessible guidance)
 
-Full repo setup (install script, MCP, Graphify): see [../README.md](../README.md).
+Full repo setup: [../README.md](../README.md).  
+**Gate in plain English:** [references/gate-quick.md](references/gate-quick.md) (short — not overwhelming).
 
 ---
 

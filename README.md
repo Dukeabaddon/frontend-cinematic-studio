@@ -1,60 +1,95 @@
 # Frontend Cinematic Studio
 
-An [**Agent Skill**](https://agentskills.io/) that teaches AI coding assistants to build **award-level cinematic websites** — editorial layouts, tactile materials, intentional motion — while rejecting generic “AI slop” UI.
+<p align="center">
+  <strong>Agent Skill</strong> for award-level cinematic websites — goals-first design, anti-AI-slop, Graphify maps, Gate-MCP compression.
+</p>
 
-Includes optional **token-saving tooling** ([Graphify](https://github.com/safishamsi/graphify), [Gate-MCP](https://github.com/Dukeabaddon/Gate-MCP)) so agents explore large codebases without burning context on full-file reads.
-
-**Works with:** [Cursor](https://cursor.com/docs/skills), [Google Antigravity](https://codelabs.developers.google.com/getting-started-with-antigravity-skills), [VS Code Copilot](https://code.visualstudio.com/docs/copilot/customization/agent-skills), and other agents that follow the open `SKILL.md` format.
-
----
-
-## What problem does this solve?
-
-| Without this skill | With this skill |
-|--------------------|-----------------|
-| Purple gradients, blur spam, template card grids | Custom palettes, material layers, editorial pacing |
-| Agent jumps straight to tasks / code | **Goals first**, then implementation |
-| Grep + read entire repo | Graphify map + Gate-compressed reads |
-| Long agent monologues | Tool-first workflow + short **User briefs** for you |
-
-The skill is a **portable design + engineering playbook** (philosophy, motion rules, anti-patterns, workflows) — not a one-off prompt.
+<p align="center">
+  <a href="https://agentskills.io/">Agent Skills</a> ·
+  <a href="https://cursor.com/docs/skills">Cursor</a> ·
+  <a href="https://github.com/safishamsi/graphify">Graphify</a> ·
+  <a href="https://github.com/Dukeabaddon/Gate-MCP">Gate-MCP</a>
+</p>
 
 ---
 
-## What you get
+## TL;DR
+
+| Step | Action |
+|------|--------|
+| 1 | `git clone https://github.com/Dukeabaddon/frontend-cinematic-studio.git` |
+| 2 | `.\install.ps1` → restart Cursor |
+| 3 | MCP **gatemcp** = green |
+| 4 | Agent: `/frontend-cinematic-studio` + your site brief |
+
+Agent **auto-detects** Graphify/Gate, **installs if missing**, **reuses** existing `graphify-out/`. Gate is **always on** for code reads when MCP works.
+
+---
+
+## What is this?
+
+Not a website. Not an npm app. A **portable skill folder** ([open standard](https://agentskills.io/specification)) that tells AI agents how to build **handcrafted, cinematic frontends** — and how to save tokens while doing it.
 
 ```
-frontend-cinematic-studio/     ← the skill (copy this folder to your IDE)
-├── SKILL.md                   ← agent control plane (~170 lines)
-├── references/                ← handbook (loaded on demand)
-├── checklists/                ← award bar + verify
-└── prompts/                   ← reusable site briefs
-
-install.ps1                    ← optional: Graphify + Gate-MCP + Cursor wiring
+You invoke  →  Agent loads SKILL.md  →  Goals first  →  Graphify map  →  Gate reads  →  Code
 ```
-
-**Invoke in Agent chat:** `/frontend-cinematic-studio`
-
-The skill is **manual-only** (`disable-model-invocation: true`) — you turn it on when you want cinematic mode, not on every message.
 
 ---
 
-## Prerequisites
+## Skill vs plugin vs MCP (Cursor & Antigravity)
 
-| Tool | Purpose | Install |
-|------|---------|---------|
-| **Python 3.10+** | Graphify CLI | [python.org](https://www.python.org/downloads/) |
-| **Node.js 20+** | Gate-MCP (via install script) | [nodejs.org](https://nodejs.org/) |
-| **Git** | Clone this repo | — |
-| **Cursor / Copilot / Antigravity** | Host for skills + MCP | — |
+Popular repos use different packaging. Yours uses **Agent Skill + MCP**:
 
-Graphify and Gate are **optional** for the design doctrine alone, but **recommended** for large projects and token efficiency.
+| Type | What it is | Example | This repo |
+|------|------------|---------|-----------|
+| **Agent Skill** | Folder + `SKILL.md`, `/slash` invoke | [agentskills.io](https://agentskills.io/) | **`frontend-cinematic-studio/`** |
+| **Cursor plugin** | `.cursor-plugin/plugin.json` auto-discovery | [Understand-Anything](https://github.com/Lum1104/Understand-Anything) (~17k★) | Not included — copy skill folder instead |
+| **MCP server** | Tools in Settings → MCP | Gate-MCP | **`gatemcp`** via `.cursor/mcp.json` |
+| **Cursor rule** | Always-on `.mdc` | Graphify rule | **`.cursor/rules/graphify.mdc`** after install |
+
+### [Understand-Anything](https://github.com/Lum1104/Understand-Anything) (rising star)
+
+- **Plugin** with dashboard, `/understand`, `/understand-chat`
+- Cursor: clone repo → `.cursor-plugin/plugin.json` auto-loads
+- Graph at `.understand-anything/knowledge-graph.json`
+- Great for **exploring** code visually
+
+### [Graphify](https://github.com/safishamsi/graphify) (~51k★)
+
+- **Skill + CLI** — `python -m graphify .` → `graphify-out/`
+- Lighter, query from terminal/agent shell
+- **This skill uses Graphify by default**
+
+### [Gate-MCP](https://github.com/Dukeabaddon/Gate-MCP)
+
+- **MCP only** — compresses each file read (~89% on large repos)
+- **This skill requires Gate whenever MCP is online**
+
+| You want… | Install |
+|-----------|---------|
+| Cinematic design + token stack | **This repo** |
+| Big interactive graph UI | [Understand-Anything](https://github.com/Lum1104/Understand-Anything) (optional, works alongside) |
+| Map only | `pip install graphifyy` |
+| Compress reads only | `npx -y @gatemcp/cli` + MCP config |
+
+**Antigravity:** copy skill to `.agent/skills/frontend-cinematic-studio/` — same `SKILL.md` format ([Google codelab](https://codelabs.developers.google.com/getting-started-with-antigravity-skills)).
+
+**OpenClaw / Codex / Copilot:** same skill folder; paths in [frontend-cinematic-studio/README.md](frontend-cinematic-studio/README.md).
+
+---
+
+## Features
+
+- **Goals, not tasks** — outcomes before implementation  
+- **Anti-AI-slop** — ban purple gradients, fake STATUS widgets, blur spam  
+- **Auto tooling** — detect `graphify-out/`, install `graphifyy`, bootstrap Gate  
+- **Gate always** — compress code reads by default  
+- **Brief replies** — short User briefs (accessibility-friendly)  
+- **Handbook** — materials, motion, Pinterest workflow, award checklist  
 
 ---
 
 ## Quick start
-
-### 1. Clone and install tooling
 
 ```powershell
 git clone https://github.com/Dukeabaddon/frontend-cinematic-studio.git
@@ -62,223 +97,149 @@ cd frontend-cinematic-studio
 .\install.ps1
 ```
 
-`install.ps1` will:
-
-- Install **`graphifyy`** from PyPI and register Graphify for Cursor
-- Clone and build **Gate-MCP** under `tools/` (gitignored)
-- Copy the skill to **`.cursor/skills/frontend-cinematic-studio/`**
-- Write **`.cursor/mcp.json`** for Gate (local path; not committed)
-
-### 2. Restart your IDE
-
-Confirm **MCP → `gatemcp`** is connected (Cursor: Settings → MCP).
-
-### 3. Run the skill
-
-In **Agent** chat:
+Restart Cursor → MCP **gatemcp** connected.
 
 ```text
 /frontend-cinematic-studio
+Editorial portfolio. Forest gothic. Next.js.
 ```
 
-Then describe your site, for example:
+Expect **short Preflight** → aesthetic tuple → **goals** → code.
 
-```text
-Forest gothic portfolio. Parchment to charcoal acts. Hero: figure right,
-monumental serif type behind landscape. Next.js + Framer Motion.
-```
-
-The agent should respond with:
-
-1. **Aesthetic tuple** (mood, palette, fonts, motion, z-layers)
-2. **Goals** (outcomes, not a task list)
-3. Token-stack steps if the repo is large
-
----
-
-## How to use the skill (workflows)
-
-| Phase | When | Skill reference |
-|-------|------|-----------------|
-| **0 — Plan** | Before any code | `aesthetic-tuple-template.md`, `scope-triage.md` |
-| **1 — Build** | New site from reference image | `workflows/phase-1-kimi-build.md` |
-| **2 — Refine** | Fix motion, z-index, polish | `workflows/phase-2-claude-refine.md` |
-| **3 — Score reference** | Before feeding Pinterest to a vision model | `workflows/phase-3-pinterest-score.md` (need ≥3/4) |
-
-**Prompt tuning:** “more atmospheric”, “less generic”, “premium anime” → see [prompt-interpreter.md](frontend-cinematic-studio/references/prompt-interpreter.md).
-
-**Quality gate before ship:** [checklists/award-bar.md](frontend-cinematic-studio/checklists/award-bar.md).
-
----
-
-## Install the skill only (no repo tooling)
-
-Copy one folder to your project or global skills path:
-
-| IDE | Path |
-|-----|------|
-| **Cursor (project)** | `.cursor/skills/frontend-cinematic-studio/` |
-| **Cursor (global)** | `~/.cursor/skills/frontend-cinematic-studio/` |
-| **Antigravity** | `.agent/skills/frontend-cinematic-studio/` |
-| **VS Code Copilot** | `.github/skills/frontend-cinematic-studio/` |
+### Use on a **new website** repo
 
 ```powershell
-Copy-Item -Recurse frontend-cinematic-studio .cursor\skills\frontend-cinematic-studio
+# 1) New site
+npx create-next-app@latest my-site --ts --tailwind --app
+cd my-site
+
+# 2) Copy skill
+mkdir .cursor\skills -Force
+Copy-Item -Recurse ..\frontend-cinematic-studio\frontend-cinematic-studio .cursor\skills\frontend-cinematic-studio
+
+# 3) Tooling (from skill repo clone)
+Copy-Item ..\frontend-cinematic-studio\scripts .\scripts -Recurse
+Copy-Item ..\frontend-cinematic-studio\.cursor\mcp.json.example .cursor\mcp.json
+# Edit GATE_PROJECT_ROOT inside mcp.json to this folder path
+.\scripts\bootstrap-tooling.ps1
 ```
 
-Skill-only install: design rules still apply. For Graphify + Gate, run `install.ps1` or follow [token-stack.md](frontend-cinematic-studio/references/token-stack.md).
+Restart Cursor. Open **my-site**. Invoke skill.
 
 ---
 
-## Token stack (Graphify + Gate-MCP)
+## Tooling (brief)
 
-Used together on **large or unfamiliar** codebases.
-
-### Graphify — map the project
+### Graphify — project map
 
 ```powershell
-pip install graphifyy
-python -m graphify .                    # Windows: no leading /
+pip install graphifyy          # if missing — bootstrap does this
+python -m graphify .           # builds graphify-out/
 python -m graphify query "auth flow"
 ```
 
-Builds `graphify-out/` (graph + report). Prefer **scoped queries** over reading every file.
+### Gate-MCP — smaller reads
 
-### Gate-MCP — compress what you read
+- Agent calls `gate_init` every session  
+- Uses `gate_compress_file` instead of full file dumps  
+- **You:** keep MCP green; read [gate-quick.md](frontend-cinematic-studio/references/gate-quick.md) (1 page)
 
-MCP tools: `gate_init`, `gate_compress_file`, `gate_graph_query`, `gate_clean_response`.
+```powershell
+.\scripts\bootstrap-tooling.ps1   # detect / install / scan
+```
 
-**Typical order:** `gate_init` → graphify map → compress files → edit → clean JSON responses.
+### Caveman
 
-Details: [frontend-cinematic-studio/references/token-stack.md](frontend-cinematic-studio/references/token-stack.md).
-
-### Caveman mode (agent only)
-
-Short tool-first narration saves tokens; you still get a plain-English **User brief** after each step (accessibility). Defined in `SKILL.md`.
+Short agent **tool** chatter only. **You** always get plain English bullets.
 
 ---
 
-## Repository layout
+## Project structure
 
 ```text
-skill-creation/                          # this repo
-├── README.md                            # you are here
-├── install.ps1                          # setup script
-├── .gitignore
-│
-├── frontend-cinematic-studio/           # ★ publishable skill package
+frontend-cinematic-studio/          # GitHub repo root
+├── README.md                     # ← you are here
+├── install.ps1                   # full setup
+├── scripts/
+│   └── bootstrap-tooling.ps1     # detect | install | scan
+├── frontend-cinematic-studio/    # ★ copy this folder to any project
 │   ├── SKILL.md
-│   ├── README.md                        # skill-focused install notes
-│   ├── references/                      # design handbook
-│   ├── checklists/
-│   └── prompts/
-│
+│   ├── references/
+│   │   ├── mandatory-preflight.md
+│   │   ├── gate-quick.md         # brief Gate guide for humans
+│   │   └── workflows/ …
+│   └── checklists/
 ├── .cursor/
-│   ├── mcp.json.example                 # Gate template (committed)
-│   └── rules/graphify.mdc               # Graphify query-first rule
-│
-└── (local only, gitignored)
-    ├── reference/                       # your private prompt archives
-    ├── tools/Gate-MCP/                  # cloned by install.ps1
-    ├── .cursor/mcp.json                 # machine-specific paths
-    ├── .cursor/skills/                  # install.ps1 copy of skill
-    ├── graphify-out/
-    └── .gate-mcp/
+│   ├── mcp.json.example
+│   └── rules/graphify.mdc
+└── (gitignored locally)
+    ├── reference/                # your private prompts
+    ├── tools/Gate-MCP/
+    └── graphify-out/
 ```
 
 ---
 
-## Example session
+## Install paths
 
-```text
-You:  /frontend-cinematic-studio
-      Editorial travel site. Wes Anderson symmetry + Ghibli atmosphere.
-      Reference image attached. Next.js.
+| IDE | Skill folder |
+|-----|----------------|
+| Cursor (project) | `.cursor/skills/frontend-cinematic-studio/` |
+| Cursor (global) | `~/.cursor/skills/frontend-cinematic-studio/` |
+| Antigravity | `.agent/skills/frontend-cinematic-studio/` |
+| VS Code Copilot | `.github/skills/frontend-cinematic-studio/` |
 
-Agent: [Aesthetic tuple + 4 goals]
-       G1 Hero z-planes: type behind landscape...
-       G2 Black act between chapters...
-       ...
-
-You:  Goals approved. Build.
-
-Agent: [Uses tech-stack-menu Tier A: Next, Tailwind, Framer, Lenis]
-       [graphify / gate_compress_file on large files if needed]
-       [Implements; User brief after each phase]
-```
+**npm?** No. Skills are folders, not packages. Use `pip install graphifyy` and `npx @gatemcp/cli` for tools.
 
 ---
 
-## Verify installation
-
-See [frontend-cinematic-studio/checklists/verify.md](frontend-cinematic-studio/checklists/verify.md).
-
-Quick checks:
+## Verify
 
 - [ ] `python -m graphify --version`
-- [ ] MCP `gatemcp` connected
-- [ ] Skill visible in Cursor Settings → Rules
-- [ ] `/frontend-cinematic-studio` → goals + aesthetic tuple before code
+- [ ] MCP **gatemcp** green
+- [ ] `/frontend-cinematic-studio` → short Preflight + goals
+
+Full list: [checklists/verify.md](frontend-cinematic-studio/checklists/verify.md)
 
 ---
 
-## Troubleshooting
+## Troubleshooting (short)
 
-| Issue | Fix |
-|-------|-----|
-| `graphify` not found | Use `python -m graphify` (Windows PATH) |
-| `/graphify` fails in PowerShell | Use `graphify .` without leading `/` |
-| Gate MCP offline | Run `.\install.ps1`; restart Cursor; check `.cursor/mcp.json` |
-| Skill not in `/` menu | Copy folder to `.cursor/skills/`; restart; invoke exact name |
-| Agent writes tasks first | Re-invoke skill; say “goals only until I approve” |
-| Purple gradient hero | Point agent to `anti-patterns.md` |
-
----
-
-## How to improve this skill
-
-Best practices from the [Agent Skills spec](https://agentskills.io/specification) and [authoring guides](https://agentskill.sh/readme):
-
-1. **Keep `SKILL.md` under 500 lines** — deep content stays in `references/`.
-2. **Tune `description` in frontmatter** — third person, what + when (discovery trigger).
-3. **Test with real projects** — run award-bar + verify checklists after changes.
-4. **Add examples to `prompts/`** — one markdown file per site archetype.
-5. **Version in frontmatter** — bump `metadata.version` when behavior changes.
-
-Suggested edits:
-
-| Want to… | Edit |
-|----------|------|
-| Change art direction | `references/philosophy.md`, `anti-patterns.md` |
-| Add a library default | `references/tech-stack-menu.md` |
-| New workflow (e.g. Shopify) | `references/workflows/phase-*.md` + link from `SKILL.md` |
-| Stricter token rules | `references/token-stack.md` |
-
----
-
-## Credits and links
-
-| Resource | URL |
-|----------|-----|
-| Agent Skills open standard | https://agentskills.io/ |
-| Graphify | https://github.com/safishamsi/graphify |
-| Gate-MCP | https://github.com/Dukeabaddon/Gate-MCP |
-| Cursor Skills docs | https://cursor.com/docs/skills |
-
-**License:** Skill content — use and adapt for your projects. Third-party tools have their own licenses.
+| Problem | Fix |
+|---------|-----|
+| Agent ignores Gate | Invoke `/frontend-cinematic-studio`; MCP must be green |
+| No `gate_*` tools | `.\install.ps1`, restart Cursor |
+| No graph | `python -m graphify .` in **website** folder |
+| Overwhelmed by text | Skill uses brief mode — say “shorter” or read gate-quick.md only |
 
 ---
 
 ## FAQ
 
-**Is `reference/` in git?**  
-No. It is for your local prompt archives. Workflow content is in `frontend-cinematic-studio/references/workflows/`.
+**Understand-Anything vs this skill?**  
+Understand-Anything = plugin + dashboard for **maps**. This skill = **design doctrine** + Graphify + Gate. Use both if you want.
 
-**Can I use this without Gate or Graphify?**  
-Yes. Copy the skill folder only. Token tools are optional accelerators.
+**Plugin for Cursor?**  
+This repo is a **skill**, not `.cursor-plugin/`. Copy `frontend-cinematic-studio/` into `.cursor/skills/`. For plugin-style UX, add [Understand-Anything](https://github.com/Lum1104/Understand-Anything) separately.
 
-**Why manual invocation?**  
-So normal coding is not forced into cinematic mode. Remove `disable-model-invocation` in `SKILL.md` if you want auto-triggering.
+**Always use Gate?**  
+Yes when MCP is on. Skill enforces `gate_init` + compress-by-default. If MCP offline, agent warns you in one sentence.
 
-**Default tech stack?**  
-Agent reads `package.json` first, then suggests Tier A (Next + Tailwind + Framer + Lenis) or B/C — see `tech-stack-menu.md`.
+---
+
+## Links
+
+| Resource | URL |
+|----------|-----|
+| This repo | https://github.com/Dukeabaddon/frontend-cinematic-studio |
+| Agent Skills spec | https://agentskills.io/specification |
+| Understand-Anything | https://github.com/Lum1104/Understand-Anything |
+| Graphify | https://github.com/safishamsi/graphify |
+| Gate-MCP | https://github.com/Dukeabaddon/Gate-MCP |
+| Cursor Skills | https://cursor.com/docs/skills |
+
+---
+
+## License
+
+Skill content: use and adapt for your projects. Third-party tools have their own licenses.

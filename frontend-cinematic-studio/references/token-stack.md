@@ -2,6 +2,8 @@
 
 Use together. Graphify = **map** the repo. Gate = **compress** what you read.
 
+**When skill is invoked:** follow [mandatory-preflight.md](mandatory-preflight.md) first — not optional on large repos only.
+
 ## Graphify
 
 **Package:** `graphifyy` on PyPI. **CLI:** `python -m graphify` (Windows: never `/graphify .` — PowerShell treats `/` as path).

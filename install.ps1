@@ -58,9 +58,12 @@ New-Item -ItemType Directory -Path (Join-Path $Root ".cursor\skills") -Force | O
 if (Test-Path $skillDst) { Remove-Item -Recurse -Force $skillDst }
 Copy-Item -Recurse $skillSrc $skillDst
 
+Write-Host "==> Bootstrap detect/install..."
+& (Join-Path $Root "scripts\bootstrap-tooling.ps1") -ProjectRoot $Root
+
 Write-Host ""
 Write-Host "Done. Next steps:"
 Write-Host "  1. Restart Cursor"
 Write-Host "  2. Confirm MCP server 'gatemcp' is connected"
 Write-Host "  3. In Agent chat: /frontend-cinematic-studio"
-Write-Host "  4. Optional: python -m graphify .  (build knowledge graph for this repo)"
+Write-Host "  4. In website repo: python -m graphify .  (build graph there)"
