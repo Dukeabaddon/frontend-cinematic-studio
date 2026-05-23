@@ -92,10 +92,13 @@ frontend-cinematic-studio/
 ├── SKILL.md                       # Agent entry (read first on invoke)
 ├── README.md                      # This file
 ├── references/
-│   ├── visual-systems.md          # Composition + materials + transitions (consolidated)
-│   ├── motion-and-type.md         # Motion + typography (consolidated)
+│   ├── visual-systems.md          # Composition + materials + transitions
+│   ├── motion-and-type.md         # Motion + typography
 │   ├── footer-patterns.md         # 4 footer archetypes
 │   ├── design-md-template.md      # DESIGN.md 9-section generation template
+│   ├── creative-effects-library.md # Transitions, textures, shapes, animations (30+ patterns)
+│   ├── svg-asset-guide.md         # Lanterns, vines, frames, sparkles + decision tree
+│   ├── palette-and-type-database.md # 15 palettes, 10 font pairings, auto-suggest logic
 │   ├── tooling-guide.md           # Graphify + Gate-MCP + platform setup
 │   ├── philosophy.md
 │   ├── anti-patterns.md
@@ -113,11 +116,13 @@ frontend-cinematic-studio/
 │   ├── award-bar.md
 │   └── verify.md
 └── prompts/
-    ├── anime-fantasy-landing.md
-    ├── gaming-wiki.md
-    ├── personal-portfolio.md
-    ├── product-landing.md
-    └── editorial-magazine.md
+    ├── anime-fantasy-landing.md   # Dark anime/fantasy
+    ├── anime-portfolio-light.md   # Light/ivory art portfolio (JUPITXR-style)
+    ├── gaming-wiki.md             # Game art wiki/collection
+    ├── personal-portfolio.md      # Developer/creative portfolio
+    ├── product-landing.md         # SaaS/product (cinematic)
+    ├── saas-dark-hero.md          # Premium dark SaaS (Linear/Vercel-style)
+    └── editorial-magazine.md      # Content-heavy editorial
 ```
 
 **Progressive disclosure:** `SKILL.md` is the table of contents; agents load `references/*.md` only when needed.

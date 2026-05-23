@@ -62,6 +62,14 @@ Copy and fill this template — do not skip any field:
 - z-20 foreground: (cards, copy, CTAs)
 - z-40+ overlay dock: (nav, media controls — blur + hairline border)
 
+**Textures & effects:** (pick from [creative-effects-library.md](references/creative-effects-library.md))
+- Background texture: (grain / paper / noise / canvas / concrete / grid / none)
+- Section transitions: (torn-paper / wave / diagonal / mountain / mist / parallax-reveal)
+- Ambient decoration: (floating shapes / particles / sparkles / none)
+
+**SVG assets:** (pick from [svg-asset-guide.md](references/svg-asset-guide.md) or describe custom)
+- Decorative elements: (lanterns / vines / ornamental frame / radial burst / custom / none)
+
 **Anti-slop locks:** (list what we will NOT use for this project)
 ```
 
@@ -86,14 +94,17 @@ Does this match your vision? What to add/remove/change?
 ```
 
 #### Round 2 — Visual System Proposal
-After layout approval:
+After layout approval (auto-suggest from [palette-and-type-database.md](references/palette-and-type-database.md)):
 ```markdown
 ## Visual System
-- Palette: [3 hex codes + rationale — never generic "blue and white"]
-- Typography: [display + body + meta fonts + why]
-- UI Component Style: [glass/editorial/brutalist/cards + rationale]
+- Palette: [3 hex codes + rationale — suggest 2 options from palette database]
+- Typography: [display + body + meta fonts + import URL]
+- UI Component Style: [glass/editorial/atmospheric + rationale]
 - Reference mood: ["closest to X meets Y" — e.g. "Kinfolk meets Monster Hunter"]
-- Key CSS patterns: [which mandatory patterns apply + any custom ones]
+- Background texture: [grain/paper/noise/canvas/none + why]
+- Section transitions: [torn-paper/wave/mist/diagonal/none + why]
+- SVG decorations: [lanterns/vines/frame/sparkles/none + why]
+- Ambient effects: [floating shapes/particles/none — max 2 total effects]
 
 Approve or adjust?
 ```
@@ -380,6 +391,9 @@ Use when the hero headline needs cinematic entrance — not on every heading.
 | Motion, parallax, typography, tracking law | [motion-and-type.md](references/motion-and-type.md) |
 | Footer archetypes (reveal, typographic, editorial, minimal) | [footer-patterns.md](references/footer-patterns.md) |
 | DESIGN.md generation template (9-section standard) | [design-md-template.md](references/design-md-template.md) |
+| Creative effects (transitions, textures, shapes, animations) | [creative-effects-library.md](references/creative-effects-library.md) |
+| SVG assets (lanterns, vines, frames, sparkles, decision tree) | [svg-asset-guide.md](references/svg-asset-guide.md) |
+| Industry palettes, font pairings, auto-suggest logic | [palette-and-type-database.md](references/palette-and-type-database.md) |
 | Anti-pattern detection (full list) | [anti-patterns.md](references/anti-patterns.md) |
 | Visual philosophy (core thesis) | [philosophy.md](references/philosophy.md) |
 | Adjective → system mapping | [prompt-interpreter.md](references/prompt-interpreter.md) |
@@ -451,8 +465,8 @@ If Gate tools unavailable (e.g. Antigravity without MCP): use normal file reads,
 
 **Do not deliver code to the user until ALL of these pass.** If any fail, fix before showing.
 
-- [ ] **Grain/texture overlay** — Is there a grain overlay on the page? (Pattern 1 above)
-- [ ] **Section dissolves** — Are transitions between sections gradient dissolves, not hard borders? (Pattern 2)
+- [ ] **Grain/texture overlay** — Is there a texture (grain, paper, noise) matching the aesthetic tuple?
+- [ ] **Section transitions** — Are transitions between sections matching the tuple (torn-paper, wave, mist, dissolve)? Not hard borders?
 - [ ] **Z-layering** — Is there at least ONE section with elements at different depth planes (ambient/atmospheric/foreground)?
 - [ ] **Focal anchor** — Does the hero have a single clear focal point (character, headline, artifact)?
 - [ ] **Typography 3-role** — Are display, body, and meta fonts all different with proper tracking?
@@ -461,6 +475,9 @@ If Gate tools unavailable (e.g. Antigravity without MCP): use normal file reads,
 - [ ] **Anti-slop clean** — No centered 3-col equal grids, no default gradients, no fake status chrome?
 - [ ] **Footer present** — Does the page have a footer using one of the 4 archetypes from [footer-patterns.md](references/footer-patterns.md)?
 - [ ] **Liquid Glass v2** — If glass is used, is it the `.liquid-glass` class with `::before` border gradient? (Not raw backdrop-blur)
+- [ ] **SVG assets** — If decorative elements were planned in tuple, are they implemented as inline SVG with animation? (Not placeholder images)
+- [ ] **Effects budget** — Are there ≤3 ambient effects? (Too many = nervous/cheap)
+- [ ] **Reduced motion** — Do all animations respect `prefers-reduced-motion`?
 - [ ] **Build passes** — `npm run build` or `tsc --noEmit` succeeds?
 
 **Final gut check:** Would this page feel at home on Awwwards, or on a generic template site?
