@@ -573,6 +573,96 @@ function MagneticElement({ children, strength = 0.3 }) {
 }
 ```
 
+### 4H. Global Starfield (for dark/space/astronomy themes)
+```css
+/* Fixed-position star layer behind ALL sections — creates cohesive space feel */
+.starfield {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.star {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.8);
+}
+
+/* Generate 30-50 stars with varied sizes and positions */
+/* Size classes: small (1px), medium (2px), large (3px) */
+.star--sm { width: 1px; height: 1px; }
+.star--md { width: 2px; height: 2px; }
+.star--lg { width: 3px; height: 3px; background: rgba(255, 255, 255, 1); }
+
+/* Twinkle animation — random delays per star */
+.star--twinkle {
+  animation: twinkle var(--twinkle-dur, 4s) ease-in-out infinite;
+  animation-delay: var(--twinkle-delay, 0s);
+}
+
+@keyframes twinkle {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 1; }
+}
+
+/* Example positions — generate 30+ of these programmatically */
+.star:nth-child(1) { top: 5%; left: 12%; }
+.star:nth-child(2) { top: 8%; left: 67%; }
+.star:nth-child(3) { top: 15%; left: 34%; }
+.star:nth-child(4) { top: 22%; left: 88%; }
+.star:nth-child(5) { top: 28%; left: 45%; }
+/* ... etc. Use a loop in React/JS to generate random positions */
+```
+
+```tsx
+// React component version (recommended for Next.js projects)
+'use client'
+import { useMemo } from 'react'
+
+export function StarField({ count = 40 }) {
+  const stars = useMemo(() =>
+    Array.from({ length: count }, (_, i) => ({
+      id: i,
+      x: Math.random() * 100,
+      y: Math.random() * 100,
+      size: Math.random() < 0.6 ? 1 : Math.random() < 0.85 ? 2 : 3,
+      opacity: 0.3 + Math.random() * 0.7,
+      twinkle: Math.random() > 0.5,
+      delay: Math.random() * 5,
+      duration: 3 + Math.random() * 4,
+    })),
+  [count])
+
+  return (
+    <div className="fixed inset-0 pointer-events-none z-0" aria-hidden="true">
+      {stars.map((s) => (
+        <div
+          key={s.id}
+          className={s.twinkle ? 'animate-twinkle' : ''}
+          style={{
+            position: 'absolute',
+            left: `${s.x}%`,
+            top: `${s.y}%`,
+            width: s.size,
+            height: s.size,
+            borderRadius: '50%',
+            background: s.size === 3 ? '#fff' : 'rgba(255,255,255,0.8)',
+            opacity: s.opacity,
+            animationDelay: `${s.delay}s`,
+            animationDuration: `${s.duration}s`,
+          }}
+        />
+      ))}
+    </div>
+  )
+}
+// Add to globals.css: @keyframes twinkle { 0%,100%{opacity:0.3} 50%{opacity:1} }
+// Add to tailwind: animation: { twinkle: 'twinkle 4s ease-in-out infinite' }
+// Place <StarField /> in layout.tsx, BEFORE {children}
+```
+
 ---
 
 ## 5. Ornamental Decorations

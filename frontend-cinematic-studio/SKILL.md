@@ -81,6 +81,25 @@ Copy and fill this template — do not skip any field:
 
 🛑 **STOP RULE:** After outputting each round, print `"⏳ Awaiting your approval to proceed."` and **DO NOT continue until the user responds.** Do not create an implementation plan. Do not write any code. WAIT.
 
+#### Pre-Round: Problem Framing (NO reference image)
+
+If the user provides **no reference image/screenshot**, you MUST do problem framing FIRST. Read [design-decisions.md](references/design-decisions.md) and:
+
+1. **Rewrite the brief** in your own words back to the user
+2. **Detect the genre** from user's words (portfolio/landing/editorial/game/agency/personal)
+3. **Ask exactly 4 questions:**
+   - Light or dark theme?
+   - What's the primary action visitors should take? (hire me / buy product / read content / explore)
+   - Any brand colors or existing visual identity?
+   - Who is the target audience?
+4. **State what this is NOT** — "This is NOT a generic template. NOT corporate. NOT [anti-genre]."
+
+Print `"⏳ Answer these 4 questions so I can design the right thing."` and WAIT.
+
+After user answers → proceed to Round 1 with answers incorporated.
+
+**If user provides a reference image:** Skip problem framing, go directly to Round 1 (use the reference confirmation path).
+
 #### Round 1 — Layout Proposal
 Present to user:
 ```markdown
@@ -176,26 +195,118 @@ When the user provides a reference image to recreate:
 - ❌ Different composition/layout proportions
 - ❌ Changing the art direction (e.g. making it darker/lighter than reference)
 
-**SVG sizing:** Read [svg-asset-guide.md §9](references/svg-asset-guide.md) for text sizing. On a 1000-unit viewBox, `font-size="124"` = only 12% width. For a dominant headline, use `font-size="180-220"`.
+### 6. Illustration Decision Tree (CRITICAL)
 
-### 6. Image Asset Pipeline
-
-When generating or placing images, follow this pipeline:
+**LLMs CANNOT draw complex SVG illustrations.** People, trees, landscapes, characters — these always look crude when hand-coded as SVG paths. Use the right tool:
 
 ```
-1. Need character/object on custom background?
-   → Generate image → rembg i -a input.png output.png → transparent PNG on z-20
-   → Custom background (CSS/SVG/separate image) on z-0
+WHAT TO BUILD WITH:
 
-2. Need full scene as background?
+Inline SVG (agent writes the code):
+  ✅ Circles, rectangles, lines
+  ✅ Gradients (radial, linear)
+  ✅ Simple geometric patterns (grid, dots, sparkles, 4-pointed stars)
+  ✅ Text effects (sizing, tracking, textPath curves)
+  ✅ Simple dividers, separators, frames
+  ✅ Barcode patterns, grid overlays
+  ✅ Moon/sun glow (circle + radialGradient — no detail needed)
+
+Icon Library (import, don't draw):
+  ✅ UI icons (telescope, eye, star, rocket, compass, etc.)
+  ✅ Navigation icons (menu, arrow, chevron, search)
+  ✅ Feature icons (check, shield, zap, globe)
+  → Use: Lucide React (default), Phosphor, Heroicons, or Tabler Icons
+  → npm install lucide-react → import { Telescope, Star } from 'lucide-react'
+  → NEVER hand-draw SVG paths for icons that exist in a library
+
+AI Image Generation (for complex artwork):
+  ✅ People, characters, figures, silhouettes
+  ✅ Trees, plants, organic shapes with curves
+  ✅ Landscapes, scenery, environments
+  ✅ Animals, creatures
+  ✅ Any illustration needing 5+ artistic curved paths
+  → Generate image → use as <img> or background-image
+  → If needs transparency: generate → rembg → transparent PNG
+  → If no image generation available: use CSS gradients + basic SVG shapes
+     as ABSTRACT art, don't try to draw realistic scenes
+
+CSS-Only (no SVG needed):
+  ✅ Background gradients (linear, radial, conic)
+  ✅ Star particles (absolute-positioned small divs)
+  ✅ Grain/noise texture (pseudo-element with SVG filter)
+  ✅ Glow effects (box-shadow, radial-gradient)
+  ✅ Ground/hill silhouettes (clip-path or gradient)
+```
+
+**The rule is simple:** If a human illustrator would spend 30+ minutes drawing it, the LLM should NOT try to write it as SVG paths. Use image generation or abstract CSS instead.
+
+### 6b. Hero Composition Patterns
+
+Choose the right layout BEFORE building:
+
+**Pattern A — "Full Landscape"** (illustrated scenes, space themes, nature):
+```
+┌─────────────────────────────────────────────┐
+│  [headline]                                 │
+│  [subtitle]                     [moon/art]  │
+│  [CTA] [CTA]                               │
+│                    [scene elements]         │
+│▓▓▓▓▓▓▓▓▓▓▓▓▓ground covers FULL WIDTH▓▓▓▓▓▓▓│
+└─────────────────────────────────────────────┘
+- Background: CSS gradient, full viewport
+- Art/illustration: positioned absolute OR background-image, full width
+- Text: positioned over the scene, z-index above illustration
+- Ground: CSS gradient or clip-path at bottom, NOT inside a small SVG box
+```
+
+**Pattern B — "Split Screen"** (product, portfolio, content):
+```
+┌──────────────────┬──────────────────────────┐
+│  [headline]      │                          │
+│  [body text]     │     [image/visual]       │
+│  [CTA]           │                          │
+└──────────────────┴──────────────────────────┘
+- Left: text content
+- Right: image, illustration, or decorative element
+- Gap: 40-80px between columns
+```
+
+**Pattern C — "Centered Statement"** (editorial, minimal, typographic):
+```
+┌─────────────────────────────────────────────┐
+│              [tag line]                     │
+│         [BIG CENTERED HEADLINE]             │
+│              [subtitle]                     │
+│              [CTA]                          │
+└─────────────────────────────────────────────┘
+- No illustration
+- Pure typography impact
+- Subtle background texture only
+```
+
+### 6c. Image Asset Pipeline
+
+```
+1. Need complex illustration (people, trees, landscapes)?
+   → Generate image with AI → place as <img> or background-image
+   → For transparency: rembg i -a input.png output.png → transparent PNG
+
+2. Need character/object on custom background?
+   → Generate character → rembg → transparent PNG on z-20
+   → Custom background (CSS gradient + simple SVG shapes) on z-0
+
+3. Need full scene as background?
    → Generate/use image → object-fit: cover on z-0
-   → Layer SVG/CSS overlays on top
+   → Layer simple SVG/CSS overlays on top (sparkles, gradients, text)
 
-3. User provides their own image?
+4. No image generation available?
+   → Use ABSTRACT CSS art (gradients, blur, geometric shapes)
+   → Do NOT try to draw realistic scenes with SVG paths
+   → A beautiful abstract gradient hero > a crude SVG illustration
+
+5. User provides their own image?
    → Ask: "Should I remove the background or use the full image?"
 ```
-
-Full guide: [svg-asset-guide.md §10](references/svg-asset-guide.md)
 
 ### 7. Tech Stack Selection (MANDATORY)
 
@@ -228,6 +339,38 @@ Full guide: [svg-asset-guide.md §10](references/svg-asset-guide.md)
 | `rive-react` | Interactive vector animations, game-like UI |
 
 Default cinematic stack: **Next.js 14+ App Router, TypeScript, Tailwind, Framer Motion, Lenis, next/image, Lucide**.
+
+#### Next.js Bootstrap Checklist (VERIFY EACH STEP)
+
+When using Next.js, complete these steps IN ORDER and verify each one:
+
+```bash
+# 1. Create project (non-interactive)
+npx create-next-app@latest ./ --typescript --tailwind --eslint --app --src-dir --no-import-alias --yes
+
+# 2. Install cinematic dependencies
+npm install framer-motion lenis lucide-react
+
+# 3. VERIFY: Dev server runs without errors
+npm run dev
+# → Must see "Ready" or "Local: http://localhost:3000" before continuing
+# → If errors: fix them FIRST, do NOT proceed with broken setup
+
+# 4. ONLY THEN start writing components
+```
+
+**Common Next.js + Framer Motion errors and fixes:**
+- `"use client"` required at top of ANY file using `motion`, `useState`, hooks, or event handlers
+- `framer-motion` v11+: use `import { motion } from 'framer-motion'` (not `framer-motion/client`)
+- Tailwind v4 uses `@import "tailwindcss"` in CSS (not `@tailwind base/components/utilities`)
+- If Lenis fails: wrap in `useEffect` with cleanup, or use `@studio-freight/lenis` package
+
+**Verify after EVERY section build:**
+```bash
+npm run dev  # → no red errors in terminal
+# Open browser → section renders correctly
+# ONLY THEN proceed to next section
+```
 
 ### 8. Anti-Slop — Hard Reject
 
