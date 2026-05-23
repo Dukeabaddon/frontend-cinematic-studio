@@ -353,6 +353,59 @@ User wants decorative element:
 8. **Keep SVGs small** — under 50 lines of markup per asset. Complex illustrations should be in separate .svg files
 9. **Reduced motion** — wrap all SVG animations in `@media (prefers-reduced-motion: no-preference)`
 
+### Illustrated Scene Composition (hero landscapes, split sections)
+
+When building an illustrated scene (not a decorative element, but a SCENE with characters/landscape):
+
+**Minimum sizes on a 500-unit viewBox:**
+
+| Element | Minimum size | Why |
+|---|---|---|
+| Character/person silhouette | 40-60px tall (8-12%) | Must be clearly visible, not a speck |
+| Moon/sun (dramatic) | 80-150px diameter (16-30%) | Celestial bodies should DOMINATE the scene |
+| Moon/sun (background) | 40-60px diameter (8-12%) | Still needs atmospheric glow |
+| Trees | 120-200px tall (24-40%) | Major scene element |
+| Ground hills | Fill bottom 15-25% of viewBox | Creates depth |
+| Bench/furniture | 40-60px wide (8-12%) | Proportional to character |
+
+**Glow effects (radialGradient):**
+```html
+<!-- WRONG: Glow radius same as object = no visible glow -->
+<circle r="45" fill="url(#glow)" />  <!-- glow gradient r="50%" -->
+
+<!-- RIGHT: Glow radius 2-3× object radius = dramatic atmospheric halo -->
+<circle r="120" fill="url(#glow)" />  <!-- glow circle -->
+<circle r="45" fill="#F0F0FF" />       <!-- solid object on top -->
+```
+
+- Glow circle radius = **2-3× the object radius**
+- Inner stop: solid color at 0-20%
+- Mid stop: accent color at 30-50%, opacity 0.2-0.4
+- Outer stop: fully transparent at 100%
+
+**Ground/hills:** Use gradient fills, NOT solid black:
+```html
+<!-- WRONG: Flat black silhouette = no depth -->
+<path d="M..." fill="#000000" />
+
+<!-- RIGHT: Purple gradient = depth + matches scene palette -->
+<path d="M..." fill="#0D0B2E" />  <!-- slightly lighter than bg -->
+<!-- Or use linearGradient from scene-mid to scene-dark -->
+```
+
+**Stars/particles minimum counts:**
+- Small dots (r=1-2): minimum 12-15 per scene
+- Medium sparkles (4-pointed): minimum 4-6 per scene  
+- Large sparkles: 1-2 maximum (focal points)
+- Mix 3 opacity levels: 0.4, 0.6, 0.8
+
+**Organic tree branches:**
+- Use at least 4-5 quadratic/cubic bezier control points per branch
+- Branches should curve, not go straight
+- Vary stroke width from trunk (thick) to tips (thin)
+- ❌ Rectangular/geometric tree shapes
+- ✅ Flowing organic bezier curves
+
 ---
 
 ## 7. Common SVG Primitives Cheat Sheet

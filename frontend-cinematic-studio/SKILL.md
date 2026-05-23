@@ -75,15 +75,17 @@ Copy and fill this template — do not skip any field:
 
 **No component code until this block exists and user approves.**
 
-### 2. Dialectic Design Review (MANDATORY for full pages)
+### 2. Dialectic Design Review (BLOCKING — DO NOT SKIP)
 
-**For full-page or multi-section builds, run 2-3 rounds of review BEFORE coding.**
-Single-component requests can skip to goals.
+**For ANY request with 3+ sections, you MUST complete 2 rounds BEFORE creating an implementation plan or writing code.**
+
+🛑 **STOP RULE:** After outputting each round, print `"⏳ Awaiting your approval to proceed."` and **DO NOT continue until the user responds.** Do not create an implementation plan. Do not write any code. WAIT.
 
 #### Round 1 — Layout Proposal
 Present to user:
 ```markdown
 ## Layout Plan
+- Stack: [Next.js + Framer Motion / Vite + vanilla / HTML — see tech stack gate below]
 - Hero: [composition — e.g. split asymmetric, character anchor right-third]
 - Section 2: [purpose + layout — e.g. feature bento, editorial two-column]
 - Section 3: [purpose + layout]
@@ -91,6 +93,18 @@ Present to user:
 - Page flow: [color journey — e.g. ivory → mist dissolve → deep charcoal]
 
 Does this match your vision? What to add/remove/change?
+⏳ Awaiting your approval to proceed.
+```
+
+**If the user provided a very detailed brief or reference image:** Round 1 becomes a CONFIRMATION, not a blank proposal:
+```markdown
+## I see in your brief/reference:
+- [describe what you see, section by section]
+- [note sizes, positions, proportions as percentages]
+Two questions before I build:
+1. [specific design question — e.g. "Should the moon be this large (~30% viewport)?"]
+2. [specific technical question — e.g. "Next.js + Framer Motion, or plain HTML?"]
+⏳ Awaiting your confirmation.
 ```
 
 #### Round 2 — Visual System Proposal
@@ -107,12 +121,16 @@ After layout approval (auto-suggest from [palette-and-type-database.md](referenc
 - Ambient effects: [floating shapes/particles/none — max 2 total effects]
 
 Approve or adjust?
+⏳ Awaiting your approval to proceed.
 ```
 
 #### Round 3 — Component Preview (complex projects only)
 For projects with 4+ sections, build ONE hero section first, show to user, get feedback, then proceed with remaining sections.
 
-**Skip dialectic only when:** user provides a genre template, reference screenshot, or says "just build it."
+**When to condense (NOT skip) dialectic:**
+- User says "just build it" → still output Round 1 as a quick confirmation ("Here's what I'll build: [summary]. Going ahead unless you object.")
+- User provides a genre template → use its values, still confirm palette/fonts in Round 2
+- NEVER skip both rounds entirely for a multi-section page
 
 ### 3. Goals, Not Tasks
 
@@ -179,7 +197,39 @@ When generating or placing images, follow this pipeline:
 
 Full guide: [svg-asset-guide.md §10](references/svg-asset-guide.md)
 
-### 7. Anti-Slop — Hard Reject
+### 7. Tech Stack Selection (MANDATORY)
+
+**Select stack BEFORE coding.** Propose in dialectic Round 1 and get user approval.
+
+| Scope | Stack | Why |
+|---|---|---|
+| Single section / poster / card | Plain HTML + CSS + inline SVG | No build step needed |
+| 2-3 section landing page | Vite + vanilla TS (or HTML) | Fast, lightweight |
+| **4+ section full page** | **Next.js 14+ + Framer Motion + Tailwind + Lenis** | Scroll animations, smooth scrolling, components |
+| Immersive / 3D experience | Next.js + React Three Fiber + Framer Motion | 3D starfields, particle systems |
+
+**NEVER use plain HTML for a page with 4+ sections.** The user WILL lose:
+- Scroll reveal animations (`motion.div` + `whileInView`)
+- Smooth scrolling (Lenis)
+- Parallax effects (`useScroll` + `useTransform`)
+- Component reuse and code splitting
+
+**If the user's prompt says "single HTML file" but describes 4+ sections:**
+→ Push back: *"This design has 6 sections with scroll animations. I recommend Next.js + Framer Motion instead of plain HTML. The animations will be significantly better. Proceed with Next.js?"*
+
+**Optional libraries** (suggest when the theme calls for it):
+
+| Library | When to suggest |
+|---|---|
+| `tsparticles` / `@tsparticles/react` | Star fields, floating particles, ambient effects |
+| `react-three-fiber` + `drei` | 3D planets, immersive space scenes, orbiting objects |
+| `gsap` + `ScrollTrigger` | Complex scroll-driven storytelling, pinned sections |
+| `lottie-react` | Complex character animations from After Effects |
+| `rive-react` | Interactive vector animations, game-like UI |
+
+Default cinematic stack: **Next.js 14+ App Router, TypeScript, Tailwind, Framer Motion, Lenis, next/image, Lucide**.
+
+### 8. Anti-Slop — Hard Reject
 
 **Reject and replace immediately** if any of these appear in your output:
 
