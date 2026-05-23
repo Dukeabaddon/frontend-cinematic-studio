@@ -14,14 +14,14 @@ compatibility: >-
   Works in Cursor, Antigravity, Claude Code, Windsurf, Trae, VS Code Copilot.
 metadata:
   author: Aaron
-  version: "3.0.0"
+  version: "3.1.0"
 ---
 
 # Frontend Cinematic Studio v3
 
 Master operating system for handcrafted, atmospheric, editorial web experiences — not generic AI slop.
 
-> **v3 changes:** Dialectic questioning before full pages, section-by-section builds, Liquid Glass v2, footer patterns, auto-detect Gate-MCP/Graphify per IDE, 6-IDE config support.
+> **v3.1 changes:** Reference-matching rules, image asset pipeline (rembg bg removal), creative effects library (30+ patterns), SVG asset guide (lanterns/vines/frames/barcodes + text sizing), palette/font database (15 palettes, 10 pairings), 14-point pre-ship audit.
 
 ---
 
@@ -140,7 +140,46 @@ Output **GOALS** first (measurable visual outcomes). Example:
 
 Single-component requests ("build me a navbar", "make a card") skip this — build and deliver directly.
 
-### 5. Anti-Slop — Hard Reject
+### 5. Reference-Matching (when recreating from an image)
+
+When the user provides a reference image to recreate:
+
+**Describe before building.** Before writing code, describe EXACTLY what you see:
+- Element sizes as percentage of viewport (e.g. "headline fills ~70% width")
+- Element positions (e.g. "figure centered, bottom-third of frame")
+- Layer order (what's behind what)
+- Color values (estimate hex codes from the image)
+- What's an image vs what's SVG/CSS (don't rebuild photos as SVG)
+
+**Match the reference, don't improvise.** Common mistakes to avoid:
+- ❌ Making headline text smaller than the reference
+- ❌ Adding elements that aren't in the reference (extra geometry, axes, decorations)
+- ❌ Horizontal barcode when reference shows vertical
+- ❌ Different composition/layout proportions
+- ❌ Changing the art direction (e.g. making it darker/lighter than reference)
+
+**SVG sizing:** Read [svg-asset-guide.md §9](references/svg-asset-guide.md) for text sizing. On a 1000-unit viewBox, `font-size="124"` = only 12% width. For a dominant headline, use `font-size="180-220"`.
+
+### 6. Image Asset Pipeline
+
+When generating or placing images, follow this pipeline:
+
+```
+1. Need character/object on custom background?
+   → Generate image → rembg i -a input.png output.png → transparent PNG on z-20
+   → Custom background (CSS/SVG/separate image) on z-0
+
+2. Need full scene as background?
+   → Generate/use image → object-fit: cover on z-0
+   → Layer SVG/CSS overlays on top
+
+3. User provides their own image?
+   → Ask: "Should I remove the background or use the full image?"
+```
+
+Full guide: [svg-asset-guide.md §10](references/svg-asset-guide.md)
+
+### 7. Anti-Slop — Hard Reject
 
 **Reject and replace immediately** if any of these appear in your output:
 

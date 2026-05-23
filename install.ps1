@@ -19,7 +19,7 @@ param(
 )
 
 $SkillName = "frontend-cinematic-studio"
-$Version = "3.0.0"
+$Version = "3.1.0"
 
 # --- Shared config content (identity/output/quality/boundaries/navigation) ---
 $SharedIdentity = @"
@@ -226,5 +226,37 @@ switch ($IDE) {
   "copilot"     { Write-CopilotConfig }
 }
 
+# --- Check optional dependencies ---
+Write-Host ""
+
+# Check rembg (background removal)
+$rembgInstalled = $false
+try {
+  $null = & rembg --version 2>$null
+  $rembgInstalled = $true
+} catch { }
+
+if ($rembgInstalled) {
+  Write-Host "[OK] rembg found — background removal available" -ForegroundColor Green
+} else {
+  Write-Host "[OPTIONAL] rembg not found — install for background removal:" -ForegroundColor Yellow
+  Write-Host "  pip install `"rembg[cli]`"" -ForegroundColor Gray
+}
+
+# Check graphify
+$graphifyInstalled = $false
+try {
+  $null = & python -m graphify --version 2>$null
+  $graphifyInstalled = $true
+} catch { }
+
+if ($graphifyInstalled) {
+  Write-Host "[OK] graphify found — architecture queries available" -ForegroundColor Green
+} else {
+  Write-Host "[OPTIONAL] graphify not found — install for codebase exploration:" -ForegroundColor Yellow
+  Write-Host "  pip install graphifyy" -ForegroundColor Gray
+}
+
 Write-Host ""
 Write-Host "[DONE] Config generated for $IDE. Restart your IDE to pick up changes." -ForegroundColor Green
+

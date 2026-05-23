@@ -376,3 +376,192 @@ User wants decorative element:
 - `C cx1,cy1 cx2,cy2 x,y` — Cubic curve (2 control points)
 - `A rx,ry rot large-arc sweep x,y` — Arc
 - `Z` — Close path
+
+---
+
+## 8. Barcode Element (horizontal + vertical)
+
+### Horizontal barcode (spine/catalog style)
+```html
+<g class="barcode" aria-hidden="true">
+  <rect x="0" y="0" width="1.5" height="22" fill="rgba(255,235,200,0.2)" />
+  <rect x="3" y="0" width="1" height="22" fill="rgba(255,235,200,0.2)" />
+  <rect x="5.5" y="0" width="2.5" height="22" fill="rgba(255,235,200,0.2)" />
+  <rect x="10" y="0" width="0.8" height="22" fill="rgba(255,235,200,0.2)" />
+  <rect x="12.5" y="0" width="3.5" height="22" fill="rgba(255,235,200,0.2)" />
+  <rect x="18" y="0" width="1" height="22" fill="rgba(255,235,200,0.2)" />
+  <rect x="20.5" y="0" width="2" height="22" fill="rgba(255,235,200,0.2)" />
+  <rect x="24.5" y="0" width="4" height="22" fill="rgba(255,235,200,0.2)" />
+  <rect x="30" y="0" width="0.8" height="22" fill="rgba(255,235,200,0.2)" />
+  <rect x="32.5" y="0" width="1.5" height="22" fill="rgba(255,235,200,0.2)" />
+  <rect x="35.5" y="0" width="3" height="22" fill="rgba(255,235,200,0.2)" />
+  <rect x="40" y="0" width="0.8" height="22" fill="rgba(255,235,200,0.2)" />
+  <rect x="42.5" y="0" width="3.5" height="22" fill="rgba(255,235,200,0.2)" />
+  <rect x="48" y="0" width="2" height="22" fill="rgba(255,235,200,0.2)" />
+  <!-- Label below -->
+  <text x="0" y="32" font-family="monospace" font-size="6" letter-spacing="0.2em"
+    fill="rgba(255,235,200,0.2)">GRR.ATIV</text>
+</g>
+```
+
+### Vertical barcode (rotated — for poster/editorial use)
+```html
+<!-- Rotate the barcode group 90deg for vertical orientation -->
+<g class="barcode-vertical" transform="translate(940, 860) rotate(90)" aria-hidden="true">
+  <!-- Same rects as horizontal — rotation handles the direction -->
+  <rect x="0" y="0" width="1.5" height="22" fill="rgba(255,235,200,0.2)" />
+  <rect x="3" y="0" width="1" height="22" fill="rgba(255,235,200,0.2)" />
+  <rect x="5.5" y="0" width="2.5" height="22" fill="rgba(255,235,200,0.2)" />
+  <rect x="10" y="0" width="0.8" height="22" fill="rgba(255,235,200,0.2)" />
+  <rect x="12.5" y="0" width="3.5" height="22" fill="rgba(255,235,200,0.2)" />
+  <rect x="18" y="0" width="1" height="22" fill="rgba(255,235,200,0.2)" />
+  <rect x="20.5" y="0" width="2" height="22" fill="rgba(255,235,200,0.2)" />
+  <rect x="24.5" y="0" width="4" height="22" fill="rgba(255,235,200,0.2)" />
+  <rect x="30" y="0" width="0.8" height="22" fill="rgba(255,235,200,0.2)" />
+  <rect x="32.5" y="0" width="1.5" height="22" fill="rgba(255,235,200,0.2)" />
+  <!-- Label (rotated back so text reads normally) -->
+  <text x="0" y="-5" font-family="monospace" font-size="6" letter-spacing="0.2em"
+    fill="rgba(255,235,200,0.2)" transform="rotate(-90) translate(-30, 0)">AWE</text>
+</g>
+```
+
+**Rule:** Reference posters/editorial designs typically use VERTICAL barcodes. Default to vertical unless the user specifies horizontal.
+
+---
+
+## 9. SVG Text Sizing Guide
+
+SVG text sizes work differently from CSS. When using a viewBox-based SVG overlay:
+
+| ViewBox | font-size | Visual result | Good for |
+|---|---|---|---|
+| `0 0 1000 1000` | `120` | ~12% of poster width | Subheadings |
+| `0 0 1000 1000` | `180` | ~18% of poster width | Large display text |
+| `0 0 1000 1000` | `220` | ~22% of poster width | Dominant headline (fills width with ~7 chars) |
+| `0 0 1000 1000` | `300` | ~30% of poster width | Massive single-word (4-5 chars) |
+
+### Sizing formula
+```
+desired_percentage = font_size / viewBox_width × 100
+```
+
+For the word "BALANCE" (7 characters) to fill ~70% width:
+- Each char ≈ 10% width → `font-size ≈ 160-200` on a 1000-unit viewBox
+- With `letter-spacing: 0.15em`, add ~15% → `font-size ≈ 180`
+
+### Common mistakes
+- ❌ `font-size="124"` on 1000-unit viewBox = only 12.4% width. TOO SMALL for a poster headline.
+- ✅ `font-size="200"` on 1000-unit viewBox = ~20% width. Each letter is 2-3% wide, 7 chars + spacing fills ~60-70%.
+
+### Text warp with textPath
+```html
+<defs>
+  <!-- Curve path: deeper Q control point = more curve -->
+  <path id="warp-path" d="M 100,380 Q 500,300 900,380" />
+</defs>
+<text font-size="200" font-family="'Cinzel Decorative', serif"
+  fill="rgba(255,245,230,0.88)" letter-spacing="0.12em">
+  <textPath href="#warp-path" startOffset="50%" text-anchor="middle">BALANCE</textPath>
+</text>
+```
+
+---
+
+## 10. Image Asset Pipeline (Background Removal)
+
+When a design needs a character/object placed over a custom background, the agent should:
+
+### Decision tree
+```
+User provides/generates an image:
+│
+├── Image is already transparent PNG?
+│   └── Use directly as <img> or background
+│
+├── Image needs background removed (character, product, object)?
+│   └── Run rembg background removal (see below)
+│       → Output: transparent PNG
+│       → Place over custom CSS/SVG background
+│
+├── Image is background artwork (full scene)?
+│   └── Use as-is with object-fit: cover
+│       → Layer SVG/CSS overlays on top
+│
+└── Image generated by AI tool?
+    ├── Needs the character only → run rembg after generation
+    └── Full scene is fine → use as background directly
+```
+
+### Background removal with rembg
+
+**Install (one-time):**
+```bash
+pip install "rembg[cli]"
+```
+
+**Remove background from a single image:**
+```bash
+rembg i input.png output.png
+```
+
+**Alpha matting for fine edges (hair, fur, translucent fabrics):**
+```bash
+rembg i -a input.png output.png
+```
+
+**Batch process a folder:**
+```bash
+rembg p ./input_folder/ ./output_folder/
+```
+
+### Workflow example
+```bash
+# 1. Agent generates character artwork via generate_image tool
+#    → saved as character_raw.png
+
+# 2. Remove background
+rembg i character_raw.png character_transparent.png
+
+# 3. Use in HTML
+# <img src="character_transparent.png" class="hero-character" />
+# Background is now a CSS gradient, SVG pattern, or separate scene image
+```
+
+### When to auto-remove background
+- User says "place character over..." or "character on a custom background"
+- Reference image shows a character/object composited over a designed background
+- The design has layered z-planes where the character sits on z-20 over an atmospheric z-0
+- User attaches a reference where the subject is clearly separate from the background
+
+### When NOT to remove background
+- The full scene IS the artwork (like the BALANCE poster background)
+- User says "use the whole image" or "full scene"
+- Image is a texture, pattern, or abstract that fills the viewport
+
+### Alternative: Python script for batch + resize
+```python
+# save as scripts/prepare-assets.py
+import subprocess, sys
+from pathlib import Path
+
+def prepare_asset(input_path, output_path, remove_bg=True, max_size=2048):
+    """Remove bg and optionally resize an image asset."""
+    if remove_bg:
+        subprocess.run(["rembg", "i", "-a", str(input_path), str(output_path)], check=True)
+    else:
+        import shutil
+        shutil.copy2(input_path, output_path)
+    print(f"✓ {output_path.name} ready")
+
+if __name__ == "__main__":
+    inp = Path(sys.argv[1])
+    out = Path(sys.argv[2]) if len(sys.argv) > 2 else inp.with_stem(inp.stem + "_nobg")
+    prepare_asset(inp, out)
+```
+
+### IDE-specific notes
+| IDE | How to run rembg |
+|---|---|
+| Cursor / Antigravity / Claude Code | Terminal: `rembg i input.png output.png` |
+| Windsurf / Trae | Terminal (if shell access available) |
+| No terminal access | Ask user to run the command manually, or use an online bg removal API |
