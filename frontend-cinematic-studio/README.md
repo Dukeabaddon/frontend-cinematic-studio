@@ -1,10 +1,10 @@
-# Frontend Cinematic Studio — Skill Package
+# Frontend Cinematic Studio v3 — Skill Package
 
-Portable [**Agent Skill**](https://agentskills.io/) folder. Copy `frontend-cinematic-studio/` into your IDE skills path — no other files required for the design system to work.
+Portable [**Agent Skill**](https://agentskills.io/) folder. Works across **6 IDEs**: Cursor, Claude Code, Antigravity, Windsurf, Trae, VS Code Copilot.
 
 **Skill ID:** `frontend-cinematic-studio`  
 **Invoke:** `/frontend-cinematic-studio` in Agent chat  
-**Mode:** Manual invocation (won’t auto-load on every message)
+**Mode:** Manual invocation (won't auto-load on every message)
 
 ---
 
@@ -12,34 +12,41 @@ Portable [**Agent Skill**](https://agentskills.io/) folder. Copy `frontend-cinem
 
 Teaches the agent to:
 
+- **Dialectic design review** — 2-3 rounds of layout + visual system questioning before coding
+- **Section-by-section builds** — Never generate full pages in one shot
 - Write **goals** (outcomes) before **tasks** (implementation)
 - Build **cinematic, tactile, editorial** UIs — not generic SaaS templates
 - Follow **anti-AI-slop** rules (palette, motion, materials, composition)
-- Use **Graphify + Gate-MCP** when exploring large codebases (optional)
+- Generate **DESIGN.md** (9-section standard) as persistent design source of truth
+- Use **Graphify + Gate-MCP** when exploring large codebases (auto-detected per IDE)
+- Apply **footer patterns** from 4 archetypes (reveal, typographic, editorial, minimal)
 - Give you clear **User briefs** after tool runs (accessible guidance)
-
-Full repo setup: [../README.md](../README.md).  
-**Gate in plain English:** [references/gate-quick.md](references/gate-quick.md) (short — not overwhelming).
 
 ---
 
-## Install (skill only)
+## Install
 
-Copy this directory:
-
-| IDE | Destination |
-|-----|-------------|
-| Cursor (project) | `.cursor/skills/frontend-cinematic-studio/` |
-| Cursor (global) | `~/.cursor/skills/frontend-cinematic-studio/` |
-| Antigravity | `.agent/skills/frontend-cinematic-studio/` |
-| VS Code Copilot | `.github/skills/frontend-cinematic-studio/` |
+### Quick install (recommended)
 
 ```powershell
-# From repo root
-Copy-Item -Recurse frontend-cinematic-studio .cursor\skills\frontend-cinematic-studio
+# From repo root — generates skill + IDE config
+.\install.ps1 -IDE cursor       # or claude, antigravity, windsurf, trae, copilot
 ```
 
-Restart the IDE. Confirm the skill under **Settings → Rules** (Cursor) or **Agent Customizations → Skills** (Copilot).
+### Manual install
+
+Copy the `frontend-cinematic-studio/` directory:
+
+| IDE | Skill Destination | Config File |
+|---|---|---|
+| Cursor (project) | `.cursor/skills/frontend-cinematic-studio/` | `.cursor/rules/frontend-cinematic.mdc` |
+| Claude Code | Referenced in `CLAUDE.md` | `CLAUDE.md` (project root) |
+| Antigravity | `.agent/skills/frontend-cinematic-studio/` | Plugin `plugin.json` |
+| Windsurf | `.windsurf/skills/frontend-cinematic-studio/` | `.windsurf/rules/frontend-cinematic.md` |
+| Trae | `.trae/skills/frontend-cinematic-studio/` | `.trae/rules/frontend-cinematic.md` |
+| Copilot | `.github/skills/frontend-cinematic-studio/` | `.github/copilot-instructions.md` |
+
+Restart the IDE. Confirm the skill under **Settings → Rules** (Cursor) or equivalent.
 
 ---
 
@@ -57,20 +64,24 @@ Include what you can:
 
 - **Mood** (e.g. forest gothic, editorial travel, neon alley)
 - **Reference** (image URL or attachment)
-- **Stack** (or “suggest stack” — agent uses `references/tech-stack-menu.md`)
+- **Stack** (or "suggest stack" — agent uses `references/tech-stack-menu.md`)
 - **Scope** (landing only vs full site)
 
-### 3. Approve goals
+### 3. Dialectic review (full pages)
 
-Agent outputs **aesthetic tuple** + **goals**. Reply `approved` or edit goals before code.
+Agent presents layout plan → you approve/adjust → agent presents visual system → you approve → building starts.
 
-### 4. Optional workflows
+### 4. Section-by-section build
+
+Agent builds hero → shows you → you approve → builds next section → repeat → footer → polish → pre-ship audit.
+
+### 5. Optional workflows
 
 | Goal | Open |
 |------|------|
 | New build from Pinterest | `references/workflows/phase-3-pinterest-score.md` then `phase-1-kimi-build.md` |
 | Fix motion / hero layers | `references/workflows/phase-2-claude-refine.md` |
-| Tune “more cinematic” | `references/prompt-interpreter.md` |
+| Tune "more cinematic" | `references/prompt-interpreter.md` |
 
 ---
 
@@ -78,23 +89,22 @@ Agent outputs **aesthetic tuple** + **goals**. Reply `approved` or edit goals be
 
 ```text
 frontend-cinematic-studio/
-├── SKILL.md                 # Agent entry (read first on invoke)
-├── README.md                # This file
+├── SKILL.md                       # Agent entry (read first on invoke)
+├── README.md                      # This file
 ├── references/
+│   ├── visual-systems.md          # Composition + materials + transitions (consolidated)
+│   ├── motion-and-type.md         # Motion + typography (consolidated)
+│   ├── footer-patterns.md         # 4 footer archetypes
+│   ├── design-md-template.md      # DESIGN.md 9-section generation template
+│   ├── tooling-guide.md           # Graphify + Gate-MCP + platform setup
 │   ├── philosophy.md
 │   ├── anti-patterns.md
-│   ├── materials.md
-│   ├── transitions.md
-│   ├── motion.md
-│   ├── composition.md
-│   ├── visual-language.md
-│   ├── architecture.md
-│   ├── agentic-engineering.md
 │   ├── prompt-interpreter.md
 │   ├── aesthetic-tuple-template.md
 │   ├── scope-triage.md
 │   ├── tech-stack-menu.md
-│   ├── token-stack.md
+│   ├── architecture.md
+│   ├── agentic-engineering.md
 │   └── workflows/
 │       ├── phase-1-kimi-build.md
 │       ├── phase-2-claude-refine.md
@@ -103,22 +113,30 @@ frontend-cinematic-studio/
 │   ├── award-bar.md
 │   └── verify.md
 └── prompts/
-    └── anime-fantasy-landing.md
+    ├── anime-fantasy-landing.md
+    ├── gaming-wiki.md
+    ├── personal-portfolio.md
+    ├── product-landing.md
+    └── editorial-magazine.md
 ```
 
-**Progressive disclosure:** `SKILL.md` is the table of contents; agents load `references/*.md` only when needed. Keep new detail in `references/`, not by bloating `SKILL.md` ([authoring best practice](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices)).
+**Progressive disclosure:** `SKILL.md` is the table of contents; agents load `references/*.md` only when needed.
 
 ---
 
-## Frontmatter (for maintainers)
+## v3 Changelog
 
-```yaml
-name: frontend-cinematic-studio      # must match folder name
-description: ...                       # discovery trigger (what + when)
-disable-model-invocation: true         # manual /slash only
-```
-
-To allow auto-discovery, remove `disable-model-invocation` and strengthen `description` with your trigger phrases.
+- **Dialectic design review** — Mandatory 2-3 round questioning before full-page builds
+- **Section-by-section builds** — Never generate full page in one shot
+- **Liquid Glass v2** — Refined `.liquid-glass` class with `::before` border gradient
+- **FadeIn wrapper** — Reusable scroll-reveal component pattern
+- **Character-by-character text reveal** — Cinematic hero headline animation
+- **Footer patterns** — 4 archetypes: reveal, typographic, editorial, minimal
+- **DESIGN.md template** — 9-section AI-readable design system standard
+- **6-IDE support** — Cursor, Claude Code, Antigravity, Windsurf, Trae, Copilot
+- **IDE config generator** — `install.ps1 -IDE <name>` generates correct config per IDE
+- **Gate-MCP auto-detection** — Tooling check runs before any code
+- **11-point pre-ship audit** — Added footer + Liquid Glass v2 checks
 
 ---
 

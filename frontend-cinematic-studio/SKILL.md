@@ -1,24 +1,27 @@
 ---
 name: frontend-cinematic-studio
 description: >-
-  Directs award-level cinematic frontend builds using goals-not-tasks workflow,
-  anti-AI-slop art direction, Graphify knowledge-graph queries, and Gate-MCP
-  input compression. Use when building landing pages, portfolios, editorial sites,
-  Awwwards-style experiences, anime-atmosphere UI, or when the user invokes
-  /frontend-cinematic-studio, mentions cinematic/tactile/editorial web design,
-  or wants token-efficient exploration of large codebases.
+  Directs award-level cinematic frontend builds using dialectic design review,
+  goals-not-tasks workflow, section-by-section build, anti-AI-slop art direction,
+  Graphify knowledge-graph queries, and Gate-MCP input compression. Use when
+  building landing pages, portfolios, editorial sites, Awwwards-style experiences,
+  anime-atmosphere UI, or when the user invokes /frontend-cinematic-studio,
+  mentions cinematic/tactile/editorial web design, or wants token-efficient
+  exploration of large codebases.
 disable-model-invocation: true
 compatibility: >-
   Requires Python 3.10+ (graphifyy via python -m graphify) and Gate-MCP MCP server.
-  Works in Cursor, Antigravity (.agent/skills/), VS Code Copilot (.github/skills/).
+  Works in Cursor, Antigravity, Claude Code, Windsurf, Trae, VS Code Copilot.
 metadata:
   author: Aaron
-  version: "2.0.0"
+  version: "3.0.0"
 ---
 
-# Frontend Cinematic Studio
+# Frontend Cinematic Studio v3
 
 Master operating system for handcrafted, atmospheric, editorial web experiences — not generic AI slop.
+
+> **v3 changes:** Dialectic questioning before full pages, section-by-section builds, Liquid Glass v2, footer patterns, auto-detect Gate-MCP/Graphify per IDE, 6-IDE config support.
 
 ---
 
@@ -64,7 +67,43 @@ Copy and fill this template — do not skip any field:
 
 **No component code until this block exists and user approves.**
 
-### 2. Goals, Not Tasks
+### 2. Dialectic Design Review (MANDATORY for full pages)
+
+**For full-page or multi-section builds, run 2-3 rounds of review BEFORE coding.**
+Single-component requests can skip to goals.
+
+#### Round 1 — Layout Proposal
+Present to user:
+```markdown
+## Layout Plan
+- Hero: [composition — e.g. split asymmetric, character anchor right-third]
+- Section 2: [purpose + layout — e.g. feature bento, editorial two-column]
+- Section 3: [purpose + layout]
+- Footer: [type — reveal/typographic/editorial/minimal]
+- Page flow: [color journey — e.g. ivory → mist dissolve → deep charcoal]
+
+Does this match your vision? What to add/remove/change?
+```
+
+#### Round 2 — Visual System Proposal
+After layout approval:
+```markdown
+## Visual System
+- Palette: [3 hex codes + rationale — never generic "blue and white"]
+- Typography: [display + body + meta fonts + why]
+- UI Component Style: [glass/editorial/brutalist/cards + rationale]
+- Reference mood: ["closest to X meets Y" — e.g. "Kinfolk meets Monster Hunter"]
+- Key CSS patterns: [which mandatory patterns apply + any custom ones]
+
+Approve or adjust?
+```
+
+#### Round 3 — Component Preview (complex projects only)
+For projects with 4+ sections, build ONE hero section first, show to user, get feedback, then proceed with remaining sections.
+
+**Skip dialectic only when:** user provides a genre template, reference screenshot, or says "just build it."
+
+### 3. Goals, Not Tasks
 
 Output **GOALS** first (measurable visual outcomes). Example:
 
@@ -75,7 +114,22 @@ Output **GOALS** first (measurable visual outcomes). Example:
 
 **Do not** output implementation task lists until goals are approved. After approval: derive phased delivery (build → refine → polish).
 
-### 3. Anti-Slop — Hard Reject
+### 4. Section-by-Section Build (MANDATORY for full pages)
+
+**Never generate an entire multi-section page in one shot.** Build incrementally:
+
+```
+1. Build hero section → show to user → get approval or feedback
+2. Build section 2 → show → approve
+3. Build remaining sections (can batch 2-3 if user is happy with direction)
+4. Add footer (use footer pattern from references/footer-patterns.md)
+5. Polish transitions between sections (dissolve zones)
+6. Pre-ship audit
+```
+
+Single-component requests ("build me a navbar", "make a card") skip this — build and deliver directly.
+
+### 5. Anti-Slop — Hard Reject
 
 **Reject and replace immediately** if any of these appear in your output:
 
@@ -168,20 +222,73 @@ Optional enhancement: add `backdrop-filter: blur(2px)` for atmospheric mist effe
 
 **Tracking Law:** As font size increases, letter-spacing decreases. Small text (9–10px) **requires** wide tracking (`0.25em`–`0.3em`) to stay readable.
 
-### Pattern 4: Atmospheric Glass (forms and docks only)
+### Pattern 4: Liquid Glass v2 (forms, docks, nav only)
 
-```tsx
-<div className="relative overflow-hidden rounded-md border border-white/[0.06]
-  bg-gradient-to-b from-white/[0.04] to-transparent p-8
-  shadow-[0_30px_60px_-15px_rgba(0,0,0,0.8)] backdrop-blur-md">
-  {/* Top-edge rim light */}
-  <div className="pointer-events-none absolute inset-0
-    bg-[radial-gradient(circle_at_top,rgba(200,155,91,0.08),transparent_55%)]" />
-  {/* Content here */}
-</div>
+```css
+/* Reusable class — apply to navs, forms, overlays. NEVER decorative. */
+.liquid-glass {
+  background: rgba(0, 0, 0, 0.4);
+  background-blend-mode: luminosity;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  border: none;
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.1);
+  position: relative;
+  overflow: hidden;
+}
+.liquid-glass::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1.4px;
+  background: linear-gradient(180deg,
+    rgba(255,255,255,0.3) 0%, rgba(255,255,255,0.1) 20%,
+    rgba(255,255,255,0) 40%, rgba(255,255,255,0) 60%,
+    rgba(255,255,255,0.1) 80%, rgba(255,255,255,0.3) 100%);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
 ```
 
 Glass is **banned** as decorative. Only use on functional elements (booking forms, sticky docks, nav overlays).
+
+### Pattern 5: Reusable FadeIn Wrapper
+
+```tsx
+// Generic scroll-reveal component — use instead of raw IntersectionObserver
+function FadeIn({ children, delay = 0, duration = 600, className = '' }) {
+  const [visible, setVisible] = useState(false);
+  const ref = useRef(null);
+  useEffect(() => {
+    const obs = new IntersectionObserver(([e]) => e.isIntersecting && setVisible(true), { threshold: 0.1 });
+    if (ref.current) obs.observe(ref.current);
+    return () => obs.disconnect();
+  }, []);
+  return (
+    <div ref={ref} className={className}
+      style={{ opacity: visible ? 1 : 0, transform: visible ? 'none' : 'translateY(20px)',
+        transition: `opacity ${duration}ms ease ${delay}ms, transform ${duration}ms ease ${delay}ms` }}>
+      {children}
+    </div>
+  );
+}
+```
+
+Stagger children with incremental `delay` props (200ms, 400ms, 600ms).
+
+### Pattern 6: Character-by-Character Text Reveal
+
+```tsx
+// For hero headlines. Each char animates from translateX(-18px) to 0.
+// charDelay = 30ms, initialDelay = 200ms, transition = 500ms per char.
+// Split text by \n into lines, then each line into chars.
+// Spaces render as \u00A0 (non-breaking space).
+```
+
+Use when the hero headline needs cinematic entrance — not on every heading.
 
 ---
 
@@ -234,10 +341,24 @@ Glass is **banned** as decorative. Only use on functional elements (booking form
 
 ## PHASE 0 — Before Any Code
 
-1. **Scope triage** — [scope-triage.md](references/scope-triage.md): simple single-view vs complex multi-section.
-2. **Aesthetic tuple** — Fill the template above. No CSS until the tuple exists and user approves.
-3. **Tech stack** — Read `package.json`. If empty, propose tier from [tech-stack-menu.md](references/tech-stack-menu.md). User confirms before scaffold.
-4. **Genre template** — Check if a matching genre template exists in `prompts/`:
+1. **Tooling auto-detect** — Run before anything else:
+   ```
+   a. Check if gate_* MCP tools exist → use them (gate_init first)
+   b. Check if graphify-out/ or graph.json exists → use it
+   c. Detect IDE:
+      - Cursor: check .cursor/mcp.json
+      - Antigravity: check mcp_config.json or Settings → MCP
+      - Claude Code: MCP via claude mcp commands
+      - Windsurf: MCP via Cascade settings
+      - Trae: MCP via settings
+   d. If no MCP tools → fallback to CLI: python -m graphify query "..."
+   e. Activate caveman mode narration (3-6 word sentences between tools)
+   ```
+2. **Scope triage** — [scope-triage.md](references/scope-triage.md): simple single-view vs complex multi-section.
+3. **Aesthetic tuple** — Fill the template above. No CSS until the tuple exists and user approves.
+4. **Dialectic review** — For full pages: run Round 1 (layout) + Round 2 (visual system) from Hard Gate #2.
+5. **Tech stack** — Read `package.json`. If empty, propose tier from [tech-stack-menu.md](references/tech-stack-menu.md). User confirms before scaffold.
+6. **Genre template** — Check if a matching genre template exists in `prompts/`:
    - [anime-fantasy-landing.md](prompts/anime-fantasy-landing.md) — anime/fantasy landing pages
    - [gaming-wiki.md](prompts/gaming-wiki.md) — game portfolio/wiki pages
    - [personal-portfolio.md](prompts/personal-portfolio.md) — developer/creative portfolios
@@ -246,7 +367,8 @@ Glass is **banned** as decorative. Only use on functional elements (booking form
 
    Use the matching template as a starting point. If no match, adapt the aesthetic tuple to the user's domain.
 
-5. **Tooling preflight** — [tooling-guide.md](references/tooling-guide.md) (Graphify + Gate-MCP + platform setup).
+7. **Tooling reference** — [tooling-guide.md](references/tooling-guide.md) (Graphify + Gate-MCP + platform setup).
+8. **Generate DESIGN.md** — After tuple + dialectic approval, generate `DESIGN.md` at project root using [design-md-template.md](references/design-md-template.md). This becomes the persistent design source of truth for the project.
 
 ---
 
@@ -256,6 +378,8 @@ Glass is **banned** as decorative. Only use on functional elements (booking form
 |-------|------|
 | Z-planes, materials, dissolve transitions | [visual-systems.md](references/visual-systems.md) |
 | Motion, parallax, typography, tracking law | [motion-and-type.md](references/motion-and-type.md) |
+| Footer archetypes (reveal, typographic, editorial, minimal) | [footer-patterns.md](references/footer-patterns.md) |
+| DESIGN.md generation template (9-section standard) | [design-md-template.md](references/design-md-template.md) |
 | Anti-pattern detection (full list) | [anti-patterns.md](references/anti-patterns.md) |
 | Visual philosophy (core thesis) | [philosophy.md](references/philosophy.md) |
 | Adjective → system mapping | [prompt-interpreter.md](references/prompt-interpreter.md) |
@@ -332,9 +456,11 @@ If Gate tools unavailable (e.g. Antigravity without MCP): use normal file reads,
 - [ ] **Z-layering** — Is there at least ONE section with elements at different depth planes (ambient/atmospheric/foreground)?
 - [ ] **Focal anchor** — Does the hero have a single clear focal point (character, headline, artifact)?
 - [ ] **Typography 3-role** — Are display, body, and meta fonts all different with proper tracking?
-- [ ] **Scroll animation** — Is there at least ONE scroll-triggered reveal (useInView or IntersectionObserver)?
+- [ ] **Scroll animation** — Is there at least ONE scroll-triggered reveal (FadeIn wrapper or IntersectionObserver)?
 - [ ] **No pure white/black** — Are dominant surfaces warm/cool tinted (not raw `#fff` or `#000`)?
 - [ ] **Anti-slop clean** — No centered 3-col equal grids, no default gradients, no fake status chrome?
+- [ ] **Footer present** — Does the page have a footer using one of the 4 archetypes from [footer-patterns.md](references/footer-patterns.md)?
+- [ ] **Liquid Glass v2** — If glass is used, is it the `.liquid-glass` class with `::before` border gradient? (Not raw backdrop-blur)
 - [ ] **Build passes** — `npm run build` or `tsc --noEmit` succeeds?
 
 **Final gut check:** Would this page feel at home on Awwwards, or on a generic template site?
@@ -349,13 +475,17 @@ Full checklist: [award-bar.md](checklists/award-bar.md)
 Copy when skill starts:
 
 ```
-Cinematic Studio v2 active
+Cinematic Studio v3 active
+- [ ] Tooling auto-detected (gate/graphify/IDE)
 - [ ] Preflight posted (graphify + gate status)
 - [ ] Aesthetic tuple drafted and shown to user
 - [ ] User approved tuple
+- [ ] Dialectic review done (full pages only)
 - [ ] Goals written (not tasks)
 - [ ] User approved goals
+- [ ] Section-by-section build planned (full pages only)
 - [ ] Anti-slop pass planned
+- [ ] Footer pattern selected
 - [ ] Pre-ship audit planned
 ```
 
@@ -369,11 +499,15 @@ Short, calm, plain English — **no walls of text**. After tools: **User brief**
 
 ## Install Locations
 
-| IDE | Path |
-|---|---|
-| Cursor (project) | `.cursor/skills/frontend-cinematic-studio/` |
-| Antigravity | `.agent/skills/frontend-cinematic-studio/` |
-| Copilot | `.github/skills/frontend-cinematic-studio/` |
-| Global Cursor | `~/.cursor/skills/frontend-cinematic-studio/` |
+| IDE | Skill Path | Config File |
+|---|---|---|
+| Cursor (project) | `.cursor/skills/frontend-cinematic-studio/` | `.cursor/rules/frontend-cinematic.mdc` |
+| Antigravity | `.agent/skills/frontend-cinematic-studio/` | Plugin `plugin.json` |
+| Claude Code | `CLAUDE.md` references skill | `CLAUDE.md` (project root) |
+| Windsurf | `.windsurf/rules/frontend-cinematic-studio/` | `.windsurf/rules/frontend-cinematic.md` |
+| Trae | `.trae/skills/frontend-cinematic-studio/` | `.trae/rules/frontend-cinematic.md` |
+| Copilot | `.github/skills/frontend-cinematic-studio/` | `.github/copilot-instructions.md` |
+| Global Cursor | `~/.cursor/skills/frontend-cinematic-studio/` | N/A |
 
+Run `install.ps1 -IDE <ide>` to generate the appropriate config file.
 See [README.md](README.md) for setup.
