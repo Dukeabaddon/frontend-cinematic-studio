@@ -115,12 +115,13 @@ Common Next.js + Framer Motion fixes:
 - `framer-motion` v11+: `import { motion } from 'framer-motion'`
 - Tailwind v4: `@import "tailwindcss"` in CSS (not `@tailwind base/components/utilities`)
 
-### Rule 5: Hero = Full Width
+### Rule 5: Hero = Full Width & Crop-Safe
 When the hero has an illustrated scene (landscape, space, nature):
-- The illustration is the BACKGROUND, spanning the full viewport width
-- Text overlays the scene (positioned absolute, z-index above illustration)
-- Ground/horizon/hills cover the FULL bottom width (CSS gradient or clip-path)
-- NEVER put the illustration in a small box on one side
+- The illustration is the BACKGROUND, spanning the full viewport width.
+- Text overlays the scene (positioned absolute, z-index above illustration).
+- Ground/horizon/hills cover the FULL bottom width (CSS gradient or clip-path).
+- **Widescreen Safety:** If the generated image is square and cropped to 16:9, instruct the generator to pack key assets (moon, tree, silhouette) into the lower-middle half. Set image style to `object-cover object-[center_60%]` and use a bottom gradient overlay matching the background color to blend seamlessly.
+- NEVER put the illustration in a small box on one side.
 
 ```
 CORRECT:                          WRONG:
@@ -130,6 +131,12 @@ CORRECT:                          WRONG:
 │▓▓▓▓▓▓ground FULL WIDTH▓│       │           │__ground__│
 └─────────────────────────┘       └────────────┴──────────┘
 ```
+
+### Rule 6: Marquees & Micro-Animations
+To prevent flat, lifeless "AI slop" layouts:
+1. **Infinite Scrolling Logobars:** Brand logo strips must never be static rows with empty sides. Implement a CSS infinite-scroll marquee with duplicate logo sets.
+2. **Interactive Hover Badges:** Individual features or option cards must have clear responsive feedback. On hover, translate left border states and animate child components (e.g., spin, tilt, pulse, float icons) utilizing Tailwind `group-hover:` triggers.
+3. **Rotating Orbits:** Concentric rings or orbits must spin dynamically (slow clockwise and fast counter-clockwise) to feel organic.
 
 ---
 
