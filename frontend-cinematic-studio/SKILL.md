@@ -22,13 +22,21 @@ You don't assemble templates. You analyze what the user wants and build exactly 
 ## Workflow (follow in order, every time)
 
 ### Step 1 — Understand
-Read the user's request. If they provide a reference image, describe what you see:
-- Element sizes as percentage of viewport
-- Color values (estimate hex codes)
-- Layout composition (what's where, what overlaps what)
-- What's the FIRST thing the eye hits? That's the focal point.
+Read the user's request. **Do not start building immediately.**
 
-If no reference: ask what emotion the page should convey and who visits it.
+If they provide a **reference image**, analyze it thoroughly:
+- Element sizes as percentage of viewport ("moon is ~25% width, upper-right")
+- Color values — estimate hex codes from what you see
+- Layout composition — what's where, what overlaps, what's in front/behind
+- Focal point — what does the eye hit FIRST? That's the anchor.
+- Ground/background relationship — does the scene fill the viewport or sit in a box?
+
+If **no reference**: ask the user 2-3 clarifying questions:
+- "What emotion should a visitor feel in the first 2 seconds?"
+- "Who visits this site? (hobbyists, professionals, general public)"
+- "Any existing brands or sites that have the vibe you want?"
+
+Do NOT guess the aesthetic. Ask. Then propose.
 
 ### Step 2 — Generate DESIGN.md
 Create a `DESIGN.md` file at the project root using the template below.
@@ -61,10 +69,12 @@ Run `npm run dev` after each section — fix errors before continuing.
 Before delivering, check:
 - [ ] ONE focal point per viewport (if everything competes, nothing wins)
 - [ ] 3 type roles used (display, body, meta — each visually distinct)
-- [ ] Texture/atmosphere appropriate to mood
+- [ ] Texture/atmosphere matches DESIGN.md `effects.texture` token
+- [ ] Ambient effect matches DESIGN.md `effects.ambient` token (e.g. starfield actually rendered)
 - [ ] Sections flow into each other (not stacked like bricks)
 - [ ] Icons from Lucide/Phosphor library (not hand-drawn SVG)
 - [ ] No complex hand-drawn SVG (people, trees, landscapes)
+- [ ] Hover states on ALL interactive elements (buttons, cards, links)
 - [ ] `npm run dev` runs clean
 - [ ] No raw `#fff` or `#000` (use tinted whites/blacks)
 
@@ -193,6 +203,42 @@ Section 2 → Section 3: [transition type, mood shift]
 - No raw backdrop-blur on cards (glass on navigation only)
 - No system fonts (Arial, Helvetica, Times)
 - No raw #fff or #000
+```
+
+---
+
+## How to Implement Effect Tokens
+
+When the DESIGN.md specifies an effect, here's HOW to build it:
+
+**`texture: "grain"`** →
+```css
+.grain { position: fixed; inset: 0; pointer-events: none; z-index: 9999;
+  opacity: var(--grain-opacity, 0.04); mix-blend-mode: overlay;
+  background: repeating-conic-gradient(#000 0.0001%,transparent 0.0002%,transparent 0.0004%,#000 0.0005%); }
+```
+
+**`ambient: "starfield-N"`** → Render N dots as absolutely positioned `<div>` elements:
+```tsx
+{Array.from({length: 40}).map((_, i) => (
+  <div key={i} className="absolute rounded-full bg-white" style={{
+    width: Math.random() * 2 + 1, height: Math.random() * 2 + 1,
+    top: `${Math.random() * 100}%`, left: `${Math.random() * 100}%`,
+    opacity: Math.random() * 0.6 + 0.2,
+    animation: `twinkle ${3 + Math.random() * 5}s ease-in-out infinite ${Math.random() * 5}s`
+  }} />
+))}
+```
+
+**`section-transitions: "gradient-dissolve"`** → Between sections:
+```css
+.dissolve { height: 8rem; background: linear-gradient(to bottom, var(--from), var(--to)); pointer-events: none; }
+```
+
+**`scroll-reveal: true`** → Framer Motion:
+```tsx
+<motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
+  viewport={{ once: true }} transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}>
 ```
 
 ---
