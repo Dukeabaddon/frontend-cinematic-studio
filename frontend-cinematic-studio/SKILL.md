@@ -9,10 +9,10 @@ compatibility: >-
   Works in Cursor, Antigravity, Claude Code, Windsurf, Trae, VS Code Copilot.
 metadata:
   author: Aaron
-  version: "4.1.0"
+  version: "4.2.0"
 ---
 
-# Frontend Cinematic Studio v4.1
+# Frontend Cinematic Studio v4.2
 
 You are a senior UI/UX designer with 10+ years of experience who writes production code.
 You don't assemble templates. You analyze what the user wants and build exactly that.
@@ -57,18 +57,26 @@ When given a reference image, extract these tokens systematically BEFORE generat
 
 **3. Typography Mapping**
 For each distinct text style on the page, note:
-- Serif vs sans vs monospace
-- All-caps vs sentence case
+- Sans vs serif vs monospace vs pixel/retro
+- All-caps vs sentence case vs title case vs mixed
 - Letter-spacing (tight, normal, wide = 0.15em+)
 - Weight (light/regular/bold/extrabold)
 - Size relative to viewport (e.g., "~5vw" or "smaller than nav")
 - Color hex
 
-Map to 4 type roles:
+**IMPORTANT — Case Detection:** Determine if the page uses global uppercase (the body has an `uppercase` class) with selective `normal-case` overrides on body text. This is common in modern brutalist/designer sites. Check if small tags, nav items, and section titles are all uppercase while paragraphs are mixed case.
+
+Map to type roles:
 - **Display** — biggest text, usually headings
 - **Body** — paragraph text
-- **Meta/UI** — small labels, nav, buttons
+- **Meta/UI** — small labels, nav, buttons (often uppercase)
 - **Code** — monospace, code blocks
+
+**Font Identification from Screenshots:**
+- If a font looks like a bitmap/pixel font with small serifs → likely **Mondwest** or similar retro display font
+- If monospace looks like a typewriter font → likely **Courier Prime** or Courier New
+- If headings have wide tracking and a distinct "stamped" look → likely custom or vintage display font
+- When you can't identify the exact font, note its characteristics (pixel vs smooth, serif vs sans, width, x-height) and pick the closest Google Font substitute
 
 **4. Background & Atmosphere**
 - Solid color, gradient, or image behind content
@@ -77,18 +85,35 @@ Map to 4 type roles:
 - Faint background illustration/image? (Describe: subject, opacity, position)
 - Pattern or repeating element?
 
+**Detect Composited Backgrounds:** Look for multiple overlapping atmospheric layers:
+- A base solid color
+- A grain/noise overlay at low opacity with mix-blend-mode
+- A Three.js canvas or animated WebGL element (look for gradient movement, particle effects)
+- A filler background image with invert/opacity filters
+- Radial gradient overlays at specific corners/edges (e.g., amber glow from top-left)
+- Multiple z-index layers with different mix-blend-modes (difference, overlay, color-dodge, lighten, plus-lighter)
+- Color-mix layers that tint the entire page
+
+Document every layer you can see, its approximate z-order, and its blend mode effect.
+
 **5. Interactive Elements**
-- Buttons — style, hover state (color shift, underline), click feedback
+- Buttons — style, hover state (color shift, underline, background flash), click feedback
 - Toggles/switches — track/dot colors, current state
 - Copy buttons — position relative to code block, feedback text
 - Accordion/dropdown — chevron direction changes
 - Links — external link arrow (↗) indicator
 
+**Group Hover Effects:** Many modern sites use a group hover where:
+- On mouseenter: a background span fades in (e.g., opacity 0 → 0.05)
+- On mouseleave: it fades back out
+- Implement with `group` parent + absolute-positioned overlay span inside each interactive item
+
 **6. "See It In Action" / Showcase Section**
 - Terminal emulator present? Window controls (dots)? Label on title bar?
-- Double border or single border on terminal?
-- Visual placeholder on opposite side — solid block, image, gradient?
+- Double border or single border on terminal? (thickness: border-2, border-4?)
+- Visual placeholder on opposite side — solid block, canvas, image, gradient?
 - Any text watermark on the visual side?
+- Canvas/Three.js element on the visual side with specific blend mode?
 
 **7. Spacing Ratios**
 - Header height relative to viewport
@@ -125,31 +150,27 @@ npm run dev  # MUST see "Ready" before writing any components
 ```
 node -e "const l=require('lucide-react');console.log(Object.keys(l).filter(k=>k.toLowerCase().includes('github')).join('\n'))"
 ```
-If empty, use inline SVG paths for brand icons or fall back to `lucide-react`'s generic icons (MessageCircle, ExternalLink, etc.) with proper labels.
+If empty, use inline SVG paths for brand icons or fall back to generic equivalents.
 
 ### Step 5 — Build
 Build hero first → show user → get feedback → build next section → repeat.
 Every component must reference the DESIGN.md tokens (use CSS variables or Tailwind config).
 Run `npm run dev` after each section — fix errors before continuing.
 
-**"See It In Action" Section Spec (when present):**
-When the reference shows a terminal/display section:
-- Left side: Terminal emulator with window controls (3 dots), an optional label in the title bar, and a prompt line with blinking cursor
-- Right side: Visual placeholder — solid dark block with text watermark OR generated image OR CSS gradient atmosphere
-- The terminal must have a distinct border (often double/thicker than other borders)
-- Use a 2-column grid for this section (grid-cols-2)
-
 ### Step 6 — Audit
 Before delivering, check:
 - [ ] ONE focal point per viewport (if everything competes, nothing wins)
-- [ ] 3 type roles used (display, body, meta — each visually distinct)
+- [ ] Text case matches reference (global uppercase? mixed case only on body?)
+- [ ] At least 3 type roles used (display, body, meta — each visually distinct)
 - [ ] Texture/atmosphere matches DESIGN.md `effects.texture` token
-- [ ] Ambient effect matches DESIGN.md `effects.ambient` token (e.g. starfield actually rendered)
+- [ ] Ambient effect matches DESIGN.md `effects.ambient` token
+- [ ] Background compositing layers present (grain, canvas, gradient overlay, bg image)
+- [ ] mix-blend-modes applied correctly per the DESIGN.md compositing spec
 - [ ] Background illustration/image rendered at correct opacity
 - [ ] Sections flow into each other (not stacked like bricks)
 - [ ] Icons from Lucide/Phosphor library (inline SVG for brand icons only)
 - [ ] No complex hand-drawn SVG (people, trees, landscapes)
-- [ ] Hover states on ALL interactive elements (buttons, cards, links)
+- [ ] Hover states on ALL interactive elements — use group hover flash pattern when reference shows it
 - [ ] Theme toggle functional if DESIGN.md includes one
 - [ ] Copy buttons show "Copied!" feedback on click
 - [ ] `npm run dev` runs clean
@@ -158,7 +179,7 @@ Before delivering, check:
 
 ---
 
-## The 7 Rules (non-negotiable)
+## The 8 Rules (non-negotiable)
 
 ### Rule 1: DESIGN.md Before Code
 Generate a DESIGN.md with exact tokens BEFORE writing any component code.
@@ -167,7 +188,7 @@ Show it to the user. Wait for approval. This is the design contract.
 ### Rule 2: Never Hand-Draw Complex SVG
 LLMs produce crude SVG paths for organic shapes. Every test proves this.
 
-**What you CAN write as SVG:** circles, rectangles, lines, gradients, simple geometric patterns, sparkle dots.
+**What you CAN write as SVG:** circles, rectangles, lines, gradients, simple geometric patterns, sparkle dots, cubes, boxes.
 **What you CANNOT write as SVG:** people, trees, landscapes, characters, animals, anything with artistic curves.
 
 For complex illustrations:
@@ -175,11 +196,9 @@ For complex illustrations:
 2. If no image generation: use CSS gradients + basic geometric shapes as ABSTRACT art
 3. A beautiful abstract gradient hero > a crude SVG illustration. Always.
 
-**Faint background illustrations:** When the reference shows a subtle, low-opacity background image (e.g., a statue, landscape, or scene behind the hero text):
-- Generate it as an AI image with dark/low-contrast prompt
-- Render as `<img>` or `background-image` with `opacity: 0.05-0.08` and `mix-blend-mode: overlay` or `luminosity`
-- Always position it so critical text remains readable over it (radial gradient overlay on top helps)
-- If no AI generation available, use a CSS radial gradient or subtle pattern instead
+**Simple geometric logos (cubes, prisms, boxes):** These CAN be done as SVG. Use CSS 3D transforms
+or simple perspective paths. Three stacked cubes in isometric view, for example, are just
+3 parallelograms each with precise coordinates.
 
 ### Rule 3: Icons From Library
 ```bash
@@ -191,13 +210,6 @@ import { Telescope, Star, Eye, Rocket } from 'lucide-react'
 
 Lucide has 1500+ icons. NEVER hand-draw SVG icons if a matching icon exists.
 
-**Brand icon fallback (lucide-react v12+):**
-lucide-react removed brand icons (GitHub, Discord, Slack, X/Twitter). When the design needs these:
-1. Check if lucide-react has them first
-2. If not, use minimal inline SVG paths (find them from simpleicons.org or heroicons)
-3. For simple needs, use generic equivalents: MessageCircle for Discord, ExternalLink for ↗, etc.
-4. Keep brand SVG paths small (<10 lines)
-
 ### Rule 4: Verify Build
 After writing each section, run `npm run dev` and confirm no errors.
 If it errors: fix the error BEFORE writing the next section. Never leave a broken build.
@@ -207,42 +219,50 @@ Common Next.js + Framer Motion fixes:
 - `framer-motion` v11+: `import { motion } from 'framer-motion'`
 - Tailwind v4: `@import "tailwindcss"` in CSS (not `@tailwind base/components/utilities`)
 
-### Rule 5: Hero = Full Width & Crop-Safe
-When the hero has an illustrated scene (landscape, space, nature):
-- The illustration is the BACKGROUND, spanning the full viewport width.
-- Text overlays the scene (positioned absolute, z-index above illustration).
-- Ground/horizon/hills cover the FULL bottom width (CSS gradient or clip-path).
-- **Widescreen Safety:** If the generated image is square and cropped to 16:9, instruct the generator to pack key assets (moon, tree, silhouette) into the lower-middle half. Set image style to `object-cover object-[center_60%]` and use a bottom gradient overlay matching the background color to blend seamlessly.
-- NEVER put the illustration in a small box on one side.
+### Rule 5: Text Case First
+Before choosing fonts, determine the page's text case system:
+- **Global uppercase** — `<body class="uppercase">` with `normal-case` on body paragraphs
+- **Selective uppercase** — only nav, meta, headings are uppercase; paragraphs are normal
+- **Title case** — only first letters capitalized
+- **Mixed** — different sections use different cases
 
+Implement with Tailwind: `uppercase` on the wrapper div or body, `normal-case` on overrides.
+
+### Rule 6: Composited Backgrounds
+When the reference shows a rich, layered background (grain + canvas + gradient + image):
+1. Create each layer as an absolutely positioned fixed element
+2. Stack them with increasing z-index
+3. Apply correct mix-blend-mode per layer
+4. Keep them pointer-events: none
+
+**Layer stack order (bottom to top):**
 ```
-CORRECT:                          WRONG:
-┌─────────────────────────┐       ┌────────────┬──────────┐
-│ [text]          [moon]  │       │ [text]     │ [small   │
-│ [CTA]        [scene]   │       │ [CTA]     │  SVG box]│
-│▓▓▓▓▓▓ground FULL WIDTH▓│       │           │__ground__│
-└─────────────────────────┘       └────────────┴──────────┘
+z-index 0:  Base background color (on body)
+z-index 1:  Filler background image (mix-blend-mode: difference, opacity: 0.033, invert)
+z-index 2:  Color-mix overlay (mix-blend-mode: difference)
+z-index 3:  Radial gradient overlay (mix-blend-mode: lighten)
+z-index 99: Canvas / Three.js element (mix-blend-mode: color-dodge)
+z-index 100: Foreground color-mix (mix-blend-mode: difference)
+z-index 101: Canvas / Three.js (mix-blend-mode: overlay)
+z-index 200: Second canvas (mix-blend-mode: difference)
+z-index 9998: Grid overlay (if used)
+z-index 9999: Grain texture (mix-blend-mode: overlay)
 ```
 
-### Rule 6: Marquees & Micro-Animations
-To prevent flat, lifeless "AI slop" layouts:
-1. **Infinite Scrolling Logobars:** Brand logo strips must never be static rows with empty sides. Implement a CSS infinite-scroll marquee with duplicate logo sets.
-2. **Interactive Hover Badges:** Individual features or option cards must have clear responsive feedback. On hover, translate left border states and animate child components (e.g., spin, tilt, pulse, float icons) utilizing Tailwind `group-hover:` triggers.
-3. **Rotating Orbits:** Concentric rings or orbits must spin dynamically (slow clockwise and fast counter-clockwise) to feel organic.
-4. **Copy Button Feedback:** Every copy button must show a "Copied!" or checkmark state for 2 seconds after click, then revert. Use useState + setTimeout.
+### Rule 7: Marquees & Micro-Animations
+1. **Infinite Scrolling Logobars:** Brand logo strips must never be static rows. CSS infinite-scroll marquee.
+2. **Interactive Hover Badges:** Individual feature cards must have responsive feedback. On hover, translate left border states and animate child components with Tailwind `group-hover:` triggers.
+3. **Rotating Orbits:** Concentric rings must spin dynamically.
+4. **Copy Button Feedback:** "Copied!" state for 2 seconds after click.
+5. **Group Hover Flash:** For nav items and feature cards, use a positioned overlay span inside each item that fades from opacity 0 → 0.05 on group hover.
 
-### Rule 7: Theme Toggle Protocol
-If the DESIGN.md specifies a theme toggle (dark/light mode):
-1. Store preference in localStorage as `theme` key
-2. Apply theme class to `<html>` element on load and on toggle
-3. Toggle must be a functional button, not decorative
-4. Persist across page refreshes
-5. Light mode inverts background/text: `bg: #fff` → `text: #171717`
-6. Use CSS custom properties for both themes:
-```css
-:root { --bg: #050A09; --text: #E0E0E0; --border: rgba(255,255,255,0.08); }
-[data-theme="light"] { --bg: #f5f5f5; --text: #171717; --border: rgba(0,0,0,0.1); }
-```
+### Rule 8: Theme Toggle Protocol
+If the DESIGN.md specifies a theme toggle:
+1. Store in localStorage
+2. Apply data-theme attribute to <html>
+3. Full functional toggle, not decorative
+4. CSS custom properties for both themes
+5. Light mode: invert background/text
 
 ---
 
@@ -254,109 +274,117 @@ Generate this file at the project root for every project:
 ---
 name: "[Project Name]"
 theme: "dark"  # dark | light | mixed
+text-case: "global-uppercase"  # global-uppercase | selective-uppercase | title-case | mixed
 grid:
-  columns: 4          # number of vertical grid columns
+  columns: 4
   border-color: "rgba(255,255,255,0.08)"
   border-width: "1px"
-  continuous: true    # do grid lines span viewport from header to footer?
+  continuous: true
 colors:
-  background: "#0B0D2E"
+  background: "#041C1C"
+  midground: "#ffe6cb"         # accent/midground color (common in modern dark sites)
+  foreground: "#FFFFFF"        # base foreground
   surface: "#141837"
-  text-primary: "#F0ECE5"
-  text-muted: "rgba(240, 236, 229, 0.5)"
-  accent: "#64B5F6"
-  accent-hover: "#90CAF9"
-  accent-warm: "#C89B5B"       # optional warm accent
-  code-bg: "#000000"           # optional, if code blocks exist
-  code-text: "#c3a6ff"         # optional, syntax highlighting color
+  text-primary: "#FFFFFF"
+  text-muted: "rgba(255,255,255,0.6)"
+  accent: "#FFBD38"
+  accent-warm: "#ffe6cb"
+  code-bg: "#000000"
+  code-text: "#c3a6ff"
 typography:
   display:
-    family: "Space Grotesk"
-    size: "clamp(2.5rem, 5vw, 4rem)"
-    weight: 700
-    tracking: "-0.02em"
+    family: "Inter"            # NOT serif unless reference explicitly shows serif
+    size: "clamp(2.5rem, 5vw, 3.5rem)"
+    weight: 800
+    tracking: "-0.03em"
   body:
-    family: "Inter"
-    size: "1rem"
+    family: "Inter"            # sans-serif body is more common than serif in modern sites
+    size: "1.0625rem"
     weight: 400
-    leading: 1.7
+    leading: 1.6
   meta:
-    family: "JetBrains Mono"
-    size: "0.7rem"
+    family: "JetBrains Mono"   # retro/pixel fonts: substitute with VT323, Pixelify Sans, or JetBrains Mono
+    size: "0.9375rem"
     weight: 500
-    tracking: "0.2em"
+    tracking: "0.1875rem"
     transform: "uppercase"
+  code:
+    family: "Courier Prime"    # typewriter monospace substitute: Courier Prime, Courier, or JetBrains Mono
+    size: "0.875rem"
 spacing:
   section-padding: "96px"
   container-max: "1200px"
   element-gap: "24px"
-  cell-inset: "32px"           # padding inside grid cells (text → border)
-  hero-heading-gap: "24px"    # gap between headline and subheadline
+  cell-inset: "16px"
+  hero-heading-gap: "24px"
 effects:
-  texture: "grain"          # grain | paper | noise | dots | none
-  texture-opacity: 0.04
-  ambient: "starfield-40"   # starfield-{count} | particles | none
-  vignette: false            # radial gradient darkening at edges
-  bg-image: null             # path or AI prompt for faint background image
-  bg-image-opacity: 0.06     # opacity of background illustration
-  section-transitions: "gradient-dissolve"  # gradient-dissolve | curve | hard-break
-  scroll-reveal: true       # fade-up on viewport enter
-  scroll-reveal-duration: "0.7s"
+  texture: "grain"
+  texture-opacity: 0.03
+  ambient: "starfield-40"
+  vignette: false
+  bg-image: null
+  bg-image-opacity: 0.033
+  bg-image-filter: "invert"   # invert | grayscale | none
+  section-transitions: "hard-break"
+  scroll-reveal: true
+  scroll-reveal-duration: "0.6s"
   scroll-reveal-easing: "cubic-bezier(0.16, 1, 0.3, 1)"
+compositing:
+  enabled: false               # does the page use multi-layer compositing?
+  layers:
+    - type: "bg-color"         # always layer 0
+      z: 0
+    - type: "filler-image"     # optional filler bg with filter
+      z: 1
+      opacity: 0.033
+      filter: "invert"
+      blend: "difference"
+    - type: "color-mix"        # optional color-mix overlay
+      z: 2
+      blend: "difference"
+    - type: "radial-gradient"  # optional glow
+      z: 3
+      blend: "lighten"
+      opacity: 0.22
+      color: "#FFBD38"
+      position: "top-left"
+    - type: "canvas"           # optional Three.js/WebGL
+      z: 99
+      blend: "color-dodge"
+    - type: "canvas"           # optional second canvas
+      z: 101
+      blend: "overlay"
+    - type: "grain"            # always topmost
+      z: 9999
+      blend: "overlay"
+      opacity: 0.03
 hero:
-  layout: "full-landscape"  # full-landscape | split-screen | centered-statement
-  focal-point: "moon, upper-right quadrant"
-  illustration-method: "ai-image"  # ai-image | css-abstract | simple-svg
+  layout: "centered-statement"
+  focal-point: "headline, center"
+  illustration-method: "none"
 showcase:
-  type: "terminal-split"    # terminal-split | video | image | none
-  terminal-label: "HERMES"  # label on terminal title bar
-  terminal-border: "double" # single | double (thicker than other borders)
-  visual-side: "placeholder"  # placeholder | generated-image | gradient
+  type: "terminal-split"
+  terminal-label: "HERMES"
+  terminal-border: "double"      # single | double
+  terminal-border-width: "4"     # border-4 Tailwind
+  visual-side: "placeholder"     # placeholder | canvas | generated-image | gradient
 interactive:
-  theme-toggle: true        # dark/light mode toggle
-  copy-buttons: true        # copy-to-clipboard on code blocks
-  more-details: "accordion" # accordion | modal | link | none
+  theme-toggle: false
+  copy-buttons: true
+  hover-style: "group-flash"     # group-flash | opacity | underline | none
+  more-details: "accordion"
 responsive:
-  collapse-at: "768px"      # breakpoint for single column
-  features-grid: "3-col"    # 3-col | 2-col | auto-fill
+  collapse-at: "768px"
+  features-grid: "3-col"
 ---
 
 # Design Decisions
-
-## Hero
-The hero communicates [brand message] in 2 seconds. The [focal element] is the
-visual anchor at [size]% of the viewport. Eye flow: [element] → [element] → CTA.
-
-## Palette Rationale
-[Why these specific colors. What mood they create.]
-
-## Section Flow
-Section 1 (hero) → Section 2: [transition type, density change]
-Section 2 → Section 3: [transition type, mood shift]
-
-## Atmosphere
-[If background image: what it depicts, its opacity, where it sits behind content]
-[If grain/noise texture: what it contributes to the mood]
-
-## Interactive Notes
-[Theme toggle: dark mode only, or both themes functional?]
-[Copy buttons: any special feedback behavior?]
-[Accordion/dropdown: what does it reveal?]
-
-## Banned
-- No purple-to-blue default gradients
-- No centered 3-column equal card grids
-- No raw backdrop-blur on cards (glass on navigation only)
-- No system fonts (Arial, Helvetica, Times)
-- No raw #fff or #000
-- No placeholder icons where lucide-react has a match
+[Write rationale for each design choice made above]
 ```
 
 ---
 
 ## How to Implement Effect Tokens
-
-When the DESIGN.md specifies an effect, here's HOW to build it:
 
 **`texture: "grain"`** →
 ```css
@@ -365,147 +393,110 @@ When the DESIGN.md specifies an effect, here's HOW to build it:
   background: repeating-conic-gradient(#000 0.0001%,transparent 0.0002%,transparent 0.0004%,#000 0.0005%); }
 ```
 
-**`vignette: true`** →
+**`bg-image` with `bg-image-filter: "invert"`** →
 ```css
-.vignette { position: fixed; inset: 0; pointer-events: none; z-index: 9997;
-  background: radial-gradient(ellipse at center, transparent 60%, rgba(0,0,0,0.6) 100%); }
+.bg-layer { position: fixed; inset: 0; pointer-events: none; z-index: 1;
+  mix-blend-mode: difference; opacity: 0.033;
+  img { height: 150dvh; width: auto; min-width: 100dvw;
+    object-fit: cover; object-position: top-left; filter: invert(1); } }
 ```
 
-**`bg-image: ...` with `bg-image-opacity`** →
+**`color-mix blend: "difference"`** →
 ```css
-.bg-art { position: fixed; inset: 0; pointer-events: none; z-index: 0;
-  opacity: var(--bg-opacity, 0.06); mix-blend-mode: luminosity;
-  background-image: url(/path/to/image.jpg); background-size: cover; background-position: center; }
+.color-mix-layer { position: fixed; inset: 0; pointer-events: none; z-index: 2;
+  mix-blend-mode: difference;
+  background-color: color-mix(in srgb, #FFFFFF 0%, transparent); }
 ```
 
-**`ambient: "starfield-N"`** → Render N dots as absolutely positioned `<div>` elements:
-```tsx
-{Array.from({length: 40}).map((_, i) => (
-  <div key={i} className="absolute rounded-full bg-white" style={{
-    width: Math.random() * 2 + 1, height: Math.random() * 2 + 1,
-    top: `${Math.random() * 100}%`, left: `${Math.random() * 100}%`,
-    opacity: Math.random() * 0.6 + 0.2,
-    animation: `twinkle ${3 + Math.random() * 5}s ease-in-out infinite ${Math.random() * 5}s`
-  }} />
-))}
-```
-
-**`section-transitions: "gradient-dissolve"`** → Between sections:
+**`radial-gradient` blend layer** →
 ```css
-.dissolve { height: 8rem; background: linear-gradient(to bottom, var(--from), var(--to)); pointer-events: none; }
+.glow-layer { position: fixed; inset: 0; pointer-events: none; z-index: 3;
+  mix-blend-mode: lighten; opacity: 0.22;
+  background: radial-gradient(ellipse at 0% 0%, rgba(255,189,56,0) 60%, rgba(255,189,56,0.35) 100%); }
 ```
 
-**`scroll-reveal: true`** → Framer Motion:
+**Canvas for Three.js replacement** → If you can't use Three.js, simulate with CSS animated gradient:
+```css
+.ambient-canvas { position: fixed; inset: 0; pointer-events: none; z-index: 99;
+  mix-blend-mode: color-dodge; opacity: 0.3;
+  background: radial-gradient(ellipse at 50% 50%, transparent 30%, rgba(255,189,56,0.05) 100%);
+  animation: ambient-pulse 8s ease-in-out infinite alternate; }
+@keyframes ambient-pulse { 0% { opacity: 0.2; } 100% { opacity: 0.4; } }
+```
+
+**Group Hover Flash** →
 ```tsx
-<motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
-  viewport={{ once: true }} transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}>
+<div className="group relative cursor-pointer">
+  <span>Link Text</span>
+  <span className="absolute inset-1 bg-[var(--midground)] pointer-events-none
+    transition-opacity duration-250 group-hover:opacity-5 opacity-0 group-hover:duration-0" />
+</div>
 ```
 
-**Theme Toggle:**
-```tsx
-// In layout: read localStorage, apply data-theme to <html>
-"use client";
-import { useEffect, useState } from "react";
-
-export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [theme, setTheme] = useState<"dark" | "light">("dark");
-  useEffect(() => {
-    const saved = localStorage.getItem("theme") as "dark" | "light" | null;
-    if (saved) setTheme(saved);
-  }, []);
-  useEffect(() => {
-    document.documentElement.setAttribute("data-theme", theme);
-    localStorage.setItem("theme", theme);
-  }, [theme]);
-  return <>{children}</>;
-}
-
-// Toggle button:
-<button onClick={() => setTheme(t => t === "dark" ? "light" : "dark")}>
-  {theme === "dark" ? "☀" : "☾"}
-</button>
-```
-
-**Copy Button with Feedback:**
-```tsx
-const [copied, setCopied] = useState(false);
-const handleCopy = async () => {
-  await navigator.clipboard.writeText(text);
-  setCopied(true);
-  setTimeout(() => setCopied(false), 2000);
-};
-// Show "COPY" normally, "COPIED ✓" for 2s after click
-```
+**mix-blend-mode Reference:**
+| Mode | Effect | Common Use |
+|---|---|---|
+| `plus-lighter` | Screen-like additive blend | Headings to "glow" over dark backgrounds |
+| `difference` | Inverts colors where layers overlap | Grain/noise overlays, color-mix tinting |
+| `overlay` | Multiplies or screens based on base | Canvas texture over content |
+| `color-dodge` | Brightens base to reflect blend | Ambient light effects |
+| `lighten` | Keeps lighter of the two colors | Gradient glow overlays |
+| `luminosity` | Applies hue/saturation from base, luminosity from blend | Faint background images |
 
 ---
 
 ## Banned Patterns (AI slop detection)
 
-If you catch yourself producing any of these, STOP and redesign:
-
 | Pattern | Why it's slop | Do instead |
 |---|---|---|
 | `from-purple-600 to-blue-500` gradient | Instant AI tell | Use colors from DESIGN.md |
-| `grid-cols-3 gap-6` equal card grid | No hierarchy, robotic | Asymmetric grid or bento layout |
+| `grid-cols-3 gap-6` equal card grid | No hierarchy | Asymmetric grid or bento layout |
 | `backdrop-blur` on every card | Blur fatigue | Solid backgrounds with subtle borders |
-| `shadow-md` as only depth cue | Flat, no immersion | Layered z-stack with atmospheric shadows |
-| Hand-drawn SVG trees/people | Always looks crude | AI image or CSS abstract |
+| `shadow-md` as only depth cue | Flat | Layered z-stack with atmospheric compositing |
+| Hand-drawn SVG trees/people | Crude | AI image or CSS abstract |
 | System fonts (Arial, Inter default) | Zero personality | Chosen fonts from DESIGN.md |
-| `animate-bounce` | Amateur, janky | Smooth easing: `cubic-bezier(0.16, 1, 0.3, 1)` |
-| Missing hover states | Feels unfinished | Hover on every interactive element |
-| lucide-react brand icons error | Version mismatch | Check installed version, fall back to inline SVG |
+| `animate-bounce` | Amateur | Smooth easing: `cubic-bezier(0.16, 1, 0.3, 1)` |
+| Assuming serif for "elegant" sites | Wrong | Check reference — sans/pixel fonts are more common in modern dark sites |
+| Flat single-layer backgrounds | Feels cheap | Multi-layer compositing (grain + gradient + canvas) |
+| `uppercase` on body text without `normal-case` override | Hard to read | Body paragraphs should use `normal-case` |
 
 ---
 
 ## Palette Quick-Reference
 
-When the user doesn't specify colors, suggest from this table:
-
 | Mood | Background | Surface | Text | Accent |
 |---|---|---|---|---|
 | Deep space / astronomy | `#0B0D2E` | `#141837` | `#F0ECE5` | `#64B5F6` |
 | Dark editorial / luxury | `#0D1117` | `#161B22` | `#E6DFD4` | `#C89B5B` |
+| Nous Research / Hermes | `#041C1C` | `#000000` | `#FFFFFF` | `#FFBD38` / `#ffe6cb` |
 | Warm parchment / editorial | `#F5F0E8` | `#FFFDF7` | `#2C2417` | `#8B5E3C` |
 | Cool minimal / tech | `#FAFAFA` | `#FFFFFF` | `#1A1A1A` | `#0066FF` |
 | Forest / nature | `#0A1A0F` | `#142119` | `#D4E0D0` | `#4CAF50` |
 | Neon / cyberpunk | `#0A0A0A` | `#141414` | `#EDEDED` | `#00FFB2` |
-| Brutalist / terminal | `#050A09` | `#000000` | `#E0E0E0` | `#A3B18A` |
+| Dark cinematic / studio | `#1A1018` | `#2A1A24` | `#F0E8E0` | `#D4A574` |
 
 ## Font Quick-Reference
 
-| Vibe | Display | Body | Meta |
-|---|---|---|---|
-| Modern / tech | Space Grotesk | Inter | JetBrains Mono |
-| Elegant / editorial | Playfair Display | Outfit | IBM Plex Mono |
-| Bold / creative | Cabinet Grotesk | Inter | Fira Code |
-| Refined / luxury | Cormorant Garamond | EB Garamond | JetBrains Mono |
-| Brutalist / technical | Playfair Display | Inter | JetBrains Mono |
+| Vibe | Display | Body | Meta | Notes |
+|---|---|---|---|---|
+| Modern / tech | Space Grotesk | Inter | JetBrains Mono | |
+| Elegant / editorial | Playfair Display | Outfit | IBM Plex Mono | |
+| Brutalist / terminal | Inter 800 | Inter | JetBrains Mono | No serif |
+| Pixel / retro | VT323 / Pixelify Sans | Inter | JetBrains Mono | Sub for Mondwest |
+| Typewriter / monospace | Courier Prime | Inter | Courier Prime | For code-heavy designs |
+| Bold / creative | Cabinet Grotesk | Inter | Fira Code | |
 
 ---
 
 ## Responsive Behavior
 
-When the reference uses a multi-column grid layout (e.g., 4-column header, 3-column features):
-
-1. **Below 768px:**
-   - Header nav collapses: logo + hamburger or stacked layout
-   - Multi-column sections stack to single column
-   - "See It In Action" split becomes vertical stack (terminal on top, visual below)
-   - Feature grid becomes single column
-   - Padding reduces to 16px side padding
-
-2. **Below 1024px (tablet):**
-   - 3-column features → 2 columns
-   - Reduce section padding by 25%
-
-3. **Implementation:**
-   ```jsx
-   // Tailwind: <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-   ```
+1. **Below 768px:** multi-column → single column, padding → 16px
+2. **Below 1024px:** 3-column → 2-column, section padding reduced 25%
+3. **Carousels:** On mobile, fan layouts should flatten to horizontal scroll or stacked
 
 ---
 
-## Reference Files (optional, read only when needed)
+## Reference Files (optional)
 
 | File | When to read |
 |---|---|
@@ -522,5 +513,3 @@ When the reference uses a multi-column grid layout (e.g., 4-column header, 3-col
 | Antigravity | `.agent/skills/frontend-cinematic-studio/` |
 | Claude Code | Referenced in `CLAUDE.md` |
 | Windsurf | `.windsurf/rules/frontend-cinematic-studio/` |
-
-Run `install.ps1 -IDE <ide>` to install.
