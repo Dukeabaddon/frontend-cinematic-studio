@@ -44,6 +44,8 @@ When given a reference image, extract these tokens systematically BEFORE generat
 - Note border colors — are they 1px solid, dashed, or colored? Get hex
 - Do grid lines span the full viewport or only within sections?
 - Are horizontal lines continuous across columns? (brutalist grid)
+- **Check for unequal columns** — sometimes the first nav item (HOME) is wider than the rest (left half vs equally divided right half)
+- **Note nav structure** — equal flex columns vs first-item-emphasized layout
 
 **2. Color Palette**
 - Background — darkest pixel region (exclude shadows)
@@ -115,8 +117,24 @@ Document every layer you can see, its approximate z-order, and its blend mode ef
 - Any text watermark on the visual side?
 - Canvas/Three.js element on the visual side with specific blend mode?
 
-**7. Spacing Ratios**
-- Header height relative to viewport
+**8. Carousels & Galleries**
+When the reference shows a carousel (fan layout, horizontal scroll, grid):
+- **Layout type**: fan/overlap | horizontal-scroll | grid | single-show
+- **Item count**: how many items visible
+- **Center focus**: largest in center? sides smaller/rotated?
+- **Item shape**: vertical rectangles? squares? landscape?
+- **Mock content**: colored placeholders or thematic illustrations?
+- **Interaction**: auto-rotate? clickable? hover preview?
+- **Dimensions**: width/height ratio of each item
+- **Rotation angle and offset**: how many degrees from center, how much horizontal/vertical displacement
+
+**9. Logo Details**
+- **Type**: text-only | icon+text | icon-only
+- **Icon shape**: geometric (cube, circle) | abstract | brand mark
+- **Small emblems**: any secondary icons near the logo (crescent, star, dot)?
+- **Position**: centered | left-aligned | in nav
+
+**10. Spacing Ratios**
 - Section padding top/bottom
 - Gap between headline and subheadline
 - Gap between elements in a row
@@ -363,11 +381,13 @@ hero:
   focal-point: "headline, center"
   illustration-method: "none"
 showcase:
-  type: "terminal-split"
-  terminal-label: "HERMES"
-  terminal-border: "double"      # single | double
-  terminal-border-width: "4"     # border-4 Tailwind
-  visual-side: "placeholder"     # placeholder | canvas | generated-image | gradient
+  type: "carousel"           # terminal-split | video | image | carousel | none
+  items: 7                   # number of carousel items
+  layout: "fan"              # fan | horizontal-scroll | grid
+  center-largest: true       # center image larger than sides
+  item-ratio: "3:4"          # width:height ratio of items
+  rotation-deg: 6            # degrees offset per item from center
+  translate-x: 30            # horizontal spread px
 interactive:
   theme-toggle: false
   copy-buttons: true
